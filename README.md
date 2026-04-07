@@ -34,6 +34,8 @@ gantt
         테트로미노 .h / .cpp 생성 :done, t16803, 2026-04-07, 1d
     section Init Board
         보드 생성 :done, t84048, 2026-04-07, 1d
+    section Init Game
+        게임 .h / .cpp 생성 :done, t91896, 2026-04-08, 1d
 ```
 <!-- GANTT_END -->
 
@@ -61,4 +63,5 @@ gantt
 | 2025-04-07 | 시작 | 프로젝트 초기화 |
 | 2026-04-07 | tetromino | 테트로미노 .h / .cpp 생성 |
 | 2026-04-07 | Init Board | 보드 생성 |
+| 2026-04-08 | Init Game | 게임 .h / .cpp 생성 |
 <!-- LOG_END -->
