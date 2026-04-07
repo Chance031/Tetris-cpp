@@ -1,6 +1,9 @@
 #include "Game.h"
 
+#include <chrono>
 #include <iostream>
+#include <sstream>
+#include <thread>
 
 Game::Game() : m_randomEngine(std::random_device{}())
 {
@@ -13,14 +16,21 @@ void Game::Initialize()
 
 void Game::Run()
 {
-	while (m_state == GameState::Playing)
+	constexpr int TestFrameCount = 40;
+	constexpr auto FrameDelay = std::chrono::milliseconds(150);
+
+	std::cout << "\x1B[2J\x1B[H\x1B[?25l";
+
+	for (int frame = 0; frame < TestFrameCount && m_state == GameState::Playing; ++frame)
 	{
 		HandleInput();
 		Update();
 		Render();
 
-		break; // TODO: 실제 루프가 준비되면 제거
+		std::this_thread::sleep_for(FrameDelay);
 	}
+
+	std::cout << "\x1B[?25h" << std::flush;
 }
 
 void Game::StartNewSession()
@@ -42,13 +52,25 @@ void Game::HandleInput()
 
 void Game::Update()
 {
+	m_currentPiece.Move(0, 1);
+
+	if (!m_board.CanPlace(m_currentPiece))
+	{
+		m_currentPiece.Move(0, -1);
+		m_isLockRequired = true;
+	}
+
+	if (m_isLockRequired)
+		ProcessLockAndResolve();
 }
 
 void Game::Render()
 {
 	const auto currentBlocks = m_currentPiece.GetBlockLocations();
+	std::ostringstream frame;
 
-	std::cout << "Score: " << m_score
+	frame << "\x1B[H";
+	frame << "Score: " << m_score
 		<< "  Level: " << m_level
 		<< "  Lines: " << m_totalLines << '\n';
 
@@ -69,15 +91,17 @@ void Game::Render()
 			}
 
 			if (isCurrentPieceCell)
-				std::cout << '@';
+				frame << '@';
 			else if (m_board.IsCellFilled(currentPoint))
-				std::cout << '#';
+				frame << '#';
 			else
-				std::cout << '.';
+				frame << '.';
 		}
 
-		std::cout << '\n';
+		frame << '\n';
 	}
+
+	std::cout << frame.str() << std::flush;
 }
 
 void Game::SpawnNextPiece()
