@@ -1,12 +1,10 @@
 #include "Board.h"
 
+#include <cstring>
+
 void Board::Reset()
 {
-	for (int y = 0; y < Height; ++y)
-	{
-		for (int x = 0; x < Width; ++x)
-			m_cells[y][x] = 0;
-	}
+	std::memset(m_cells, 0, sizeof(m_cells));
 }
 
 bool Board::CanPlace(const Tetromino& tetromino) const
@@ -68,8 +66,7 @@ int Board::ClearLines()
 		for (int x = 0; x < Width; ++x)
 			m_cells[0][x] = 0;
 
-		// 위 줄이 내려왔으므로 같은 y 위치를 다시 검사한다.
-		++y;
+		++y;	// 위 줄이 내려왔으므로 같은 y 위치를 다시 검사한다.
 	}
 
 	return clearedLines;

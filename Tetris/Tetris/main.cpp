@@ -27,6 +27,8 @@ int main()
 	else
 		std::cout << "이미 블록이 존재합니다.\n";
 
+
+
 	const int clearedLines = board.ClearLines();
 	std::cout << "Cleared Lines: " << clearedLines << '\n';
 

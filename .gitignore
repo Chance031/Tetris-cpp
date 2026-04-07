@@ -39,3 +39,15 @@
 
 # debug information files
 *.dwo
+
+# Visual Studio generated files
+.vs/
+*.user
+*.suo
+*.ipch
+
+# Build output folders
+Debug/
+Release/
+x64/
+x86/
