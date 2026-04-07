@@ -67,9 +67,9 @@ gantt
 | 2026-04-07 | 시작 | 프로젝트 초기화 |
 | 2026-04-07 | tetromino | 테트로미노 .h / .cpp 생성 |
 | 2026-04-07 | Init Board | 보드 생성 |
-| 2026-04-08 | Init Game | 게임 .h / .cpp 생성 |
 | 2026-04-07 | 리팩토링 | m_rotation 인덱스화, SHAPE_DATA 익명 네임스페이스, Rule of Zero, 주석 개선 |
 | 2026-04-07 | 리팩토링 | Board::Reset() memset 적용, 스폰 위치 상수화, #include 중복 제거 |
 | 2026-04-07 | 테스트 | LockPiece / CanPlace / ClearLines 단위 동작 확인 |
 | 2026-04-07 | 환경 | .gitignore 설정, GitHub 초기 push 완료 |
+| 2026-04-08 | Init Game | 게임 .h / .cpp 생성 |
 <!-- LOG_END -->
