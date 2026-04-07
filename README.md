@@ -1,10 +1,15 @@
 # 🎮 Tetris-cpp
 
-C++로 만드는 콘솔 테트리스 로드맵 프로젝트
+C++로 만드는 콘솔 테트리스 프로젝트
 
-## 📋 기술 스택
+## 🛠️ 기술 스택
 
 ![C++](https://img.shields.io/badge/C++-00599C?style=flat&logo=cplusplus&logoColor=white)
+
+## 🤖 사용 AI
+
+![Claude](https://img.shields.io/badge/Claude-D97757?style=flat&logo=anthropic&logoColor=white)
+![ChatGPT](https://img.shields.io/badge/ChatGPT-74aa9c?style=flat&logo=openai&logoColor=white)
 
 ---
 
