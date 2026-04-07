@@ -44,6 +44,8 @@ gantt
         테스트 랜더링 :done, t47867, 2026-04-08, 1d
     section Test Input key
         키보드 입력 테스트 :done, t8258, 2026-04-08, 1d
+    section Input Key
+        키 입력 수정 :active, t25803, 2026-04-08, 1d
 ```
 <!-- GANTT_END -->
 
@@ -78,4 +80,5 @@ gantt
 | 2026-04-08 | Init Game | 게임 .h / .cpp 생성 |
 | 2026-04-08 | Test Rendering | 테스트 랜더링 |
 | 2026-04-08 | Test Input key | 키보드 입력 테스트 |
+| 2026-04-08 | Input Key | 키 입력 수정 |
 <!-- LOG_END -->
