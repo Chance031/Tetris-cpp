@@ -26,26 +26,24 @@ C++로 만드는 콘솔 테트리스 프로젝트
 <!-- GANTT_START -->
 ```mermaid
 gantt
-    title 테트리스 개발 일정
-    dateFormat YYYY-MM-DD
-    section 시작
-        프로젝트 초기화 :done, init, 2026-04-07, 1d
-    section tetromino
-        테트로미노 .h / .cpp 생성 :done, t16803, 2026-04-07, 1d
-    section Init Board
-        보드 생성 :done, t84048, 2026-04-07, 1d
-    section Init Game
-        게임 .h / .cpp 생성 :done, t91896, 2026-04-08, 1d
-    section 리팩토링
-        코드 리뷰 반영 및 리팩토링 :done, refactor, 2026-04-07, 1d
-    section 테스트
-        단위 테스트 (Board + Tetromino) :done, test, 2026-04-07, 1d
-    section Test Rendering
-        테스트 랜더링 :done, t47867, 2026-04-08, 1d
-    section Test Input key
-        키보드 입력 테스트 :done, t8258, 2026-04-08, 1d
-    section Input Key
-        키 입력 수정 :active, t25803, 2026-04-08, 1d
+ title 테트리스 개발 일정
+ dateFormat YYYY-MM-DD
+ section 시작
+ 프로젝트 초기화 :done, init, 2026-04-07, 1d
+ section tetromino
+ 테트로미노 .h / .cpp 생성 :done, t16803, 2026-04-07, 1d
+ section Init Board
+ 보드 생성 :done, t84048, 2026-04-07, 1d
+ section 리팩토링
+ 코드 리뷰 반영 및 리팩토링 :done, refactor, 2026-04-07, 1d
+ section 테스트
+ 단위 테스트 (Board + Tetromino) :done, test, 2026-04-07, 1d
+ section Init Game
+ 게임 .h / .cpp 생성 :done, t91896, 2026-04-08, 1d
+ section Render / Update
+ 렌더링 및 업데이트 구현 :done, t47867, 2026-04-08, 1d
+ section Input
+ 키보드 입력 구현 및 수정 :done, t8258, 2026-04-08, 1d
 ```
 <!-- GANTT_END -->
 
@@ -54,11 +52,11 @@ gantt
 ## ✅ 구현 현황
 
 <!-- CHECKLIST_START -->
-- [ ] 맵 렌더링
-- [ ] 블록 생성 및 렌더링
-- [ ] 블록 이동 / 회전
 - [x] 충돌 처리 (단위 테스트 확인)
 - [x] 라인 클리어 (단위 테스트 확인)
+- [x] 블록 생성 및 렌더링
+- [x] 블록 이동 / 회전
+- [ ] 맵 렌더링
 - [ ] 점수 시스템
 - [ ] 게임 오버 / 재시작
 <!-- CHECKLIST_END -->
@@ -68,17 +66,17 @@ gantt
 ## 📝 작업 로그
 
 <!-- LOG_START -->
-| 날짜 | 섹션 | 작업 내용 |
+| 날짜 | 타입 | 작업 내용 |
 |------|------|-----------|
-| 2026-04-07 | 시작 | 프로젝트 초기화 |
-| 2026-04-07 | tetromino | 테트로미노 .h / .cpp 생성 |
-| 2026-04-07 | Init Board | 보드 생성 |
-| 2026-04-07 | 리팩토링 | m_rotation 인덱스화, SHAPE_DATA 익명 네임스페이스, Rule of Zero, 주석 개선 |
-| 2026-04-07 | 리팩토링 | Board::Reset() memset 적용, 스폰 위치 상수화, #include 중복 제거 |
-| 2026-04-07 | 테스트 | LockPiece / CanPlace / ClearLines 단위 동작 확인 |
-| 2026-04-07 | 환경 | .gitignore 설정, GitHub 초기 push 완료 |
-| 2026-04-08 | Init Game | 게임 .h / .cpp 생성 |
-| 2026-04-08 | Test Rendering | 테스트 랜더링 |
-| 2026-04-08 | Test Input key | 키보드 입력 테스트 |
-| 2026-04-08 | Input Key | 키 입력 수정 |
+| 2026-04-07 | feat | 프로젝트 초기화 |
+| 2026-04-07 | feat | Tetromino .h / .cpp 구현 |
+| 2026-04-07 | feat | Board .h / .cpp 구현 |
+| 2026-04-07 | refactor | m_rotation 인덱스화, SHAPE_DATA 익명 네임스페이스, Rule of Zero, 주석 개선 |
+| 2026-04-07 | refactor | Board::Reset() memset 적용, 스폰 위치 상수화, #include 중복 제거 |
+| 2026-04-07 | test | LockPiece / CanPlace / ClearLines 단위 동작 확인 |
+| 2026-04-07 | chore | .gitignore 설정, GitHub 초기 push 완료 |
+| 2026-04-08 | feat | Game .h / .cpp 구현 |
+| 2026-04-08 | feat | Game::Update() / Render() 기본 구현 |
+| 2026-04-08 | feat | 키보드 입력 처리 구현 |
+| 2026-04-08 | fix | 키 입력 처리 수정 |
 <!-- LOG_END -->
