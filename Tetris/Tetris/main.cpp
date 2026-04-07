@@ -1,5 +1,22 @@
+#include "Board.h"
+
+#include <iostream>
+
 int main()
 {
-	// TODO: Game 루프가 준비되면 여기에서 초기화하고 실행한다.
+	Board board;
+	Tetromino piece(TetrominoType::T);
+
+	piece.SetPosition(4, 0);
+
+	if (board.CanPlace(piece))
+	{
+		board.LockPiece(piece);
+		std::cout << "Piece locked.\n";
+	}
+
+	const int clearedLines = board.ClearLines();
+	std::cout << "Cleared Lines: " << clearedLines << '\n';
+
 	return 0;
 }
