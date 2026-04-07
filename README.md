@@ -5,7 +5,6 @@ C++로 만드는 콘솔 테트리스 로드맵 프로젝트
 ## 📋 기술 스택
 
 ![C++](https://img.shields.io/badge/C++-00599C?style=flat&logo=cplusplus&logoColor=white)
-![SFML](https://img.shields.io/badge/SFML-8CC445?style=flat&logo=sfml&logoColor=white)
 
 ---
 
