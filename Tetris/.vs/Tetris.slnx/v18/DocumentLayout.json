@@ -44,7 +44,7 @@
               "RelativeDocumentMoniker": "Tetris\\main.cpp",
               "ToolTip": "C:\\Users\\aday0\\Desktop\\Tetris-cpp\\Tetris\\Tetris\\main.cpp",
               "RelativeToolTip": "Tetris\\main.cpp",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAABAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABsAAAAhAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2026-04-07T08:38:00.112Z",
               "IsPinned": true,
@@ -84,8 +84,7 @@
               "RelativeToolTip": "Tetris\\Tetromino.cpp",
               "ViewState": "AgIAAL0AAAAAAAAAAAAAANcAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-04-07T09:12:53.437Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-07T09:12:53.437Z"
             },
             {
               "$type": "Document",
