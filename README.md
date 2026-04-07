@@ -42,6 +42,8 @@ gantt
         단위 테스트 (Board + Tetromino) :done, test, 2026-04-07, 1d
     section Test Rendering
         테스트 랜더링 :done, t47867, 2026-04-08, 1d
+    section Test Input key
+        키보드 입력 테스트 :done, t8258, 2026-04-08, 1d
 ```
 <!-- GANTT_END -->
 
@@ -75,4 +77,5 @@ gantt
 | 2026-04-07 | 환경 | .gitignore 설정, GitHub 초기 push 완료 |
 | 2026-04-08 | Init Game | 게임 .h / .cpp 생성 |
 | 2026-04-08 | Test Rendering | 테스트 랜더링 |
+| 2026-04-08 | Test Input key | 키보드 입력 테스트 |
 <!-- LOG_END -->
