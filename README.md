@@ -26,20 +26,22 @@ C++로 만드는 콘솔 테트리스 프로젝트
 <!-- GANTT_START -->
 ```mermaid
 gantt
- title 테트리스 개발 일정
- dateFormat YYYY-MM-DD
- section 시작
- 프로젝트 초기화 :done, init, 2026-04-07, 1d
- section tetromino
- 테트로미노 .h / .cpp 생성 :done, t16803, 2026-04-07, 1d
- section Init Board
- 보드 생성 :done, t84048, 2026-04-07, 1d
- section Init Game
- 게임 .h / .cpp 생성 :done, t91896, 2026-04-08, 1d
- section 리팩토링
- 코드 리뷰 반영 및 리팩토링 :done, refactor, 2026-04-07, 1d
- section 테스트
- 단위 테스트 (Board + Tetromino) :done, test, 2026-04-07, 1d
+    title 테트리스 개발 일정
+    dateFormat YYYY-MM-DD
+    section 시작
+        프로젝트 초기화 :done, init, 2026-04-07, 1d
+    section tetromino
+        테트로미노 .h / .cpp 생성 :done, t16803, 2026-04-07, 1d
+    section Init Board
+        보드 생성 :done, t84048, 2026-04-07, 1d
+    section Init Game
+        게임 .h / .cpp 생성 :done, t91896, 2026-04-08, 1d
+    section 리팩토링
+        코드 리뷰 반영 및 리팩토링 :done, refactor, 2026-04-07, 1d
+    section 테스트
+        단위 테스트 (Board + Tetromino) :done, test, 2026-04-07, 1d
+    section Test Rendering
+        테스트 랜더링 :done, t47867, 2026-04-08, 1d
 ```
 <!-- GANTT_END -->
 
@@ -72,4 +74,5 @@ gantt
 | 2026-04-07 | 테스트 | LockPiece / CanPlace / ClearLines 단위 동작 확인 |
 | 2026-04-07 | 환경 | .gitignore 설정, GitHub 초기 push 완료 |
 | 2026-04-08 | Init Game | 게임 .h / .cpp 생성 |
+| 2026-04-08 | Test Rendering | 테스트 랜더링 |
 <!-- LOG_END -->
