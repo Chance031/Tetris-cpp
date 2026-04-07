@@ -30,6 +30,8 @@ gantt
     dateFormat YYYY-MM-DD
     section 시작
         프로젝트 초기화 :done, init, 2025-04-07, 1d
+    section tetromino
+        테트로미노 .h / .cpp 생성 :done, t16803, 2026-04-07, 1d
 ```
 <!-- GANTT_END -->
 
@@ -55,4 +57,5 @@ gantt
 | 날짜 | 섹션 | 작업 내용 |
 |------|------|-----------|
 | 2025-04-07 | 시작 | 프로젝트 초기화 |
+| 2026-04-07 | tetromino | 테트로미노 .h / .cpp 생성 |
 <!-- LOG_END -->
