@@ -4,6 +4,7 @@
 #include <iostream>
 #include <sstream>
 #include <thread>
+#include <conio.h>
 
 Game::Game() : m_randomEngine(std::random_device{}())
 {
@@ -16,7 +17,7 @@ void Game::Initialize()
 
 void Game::Run()
 {
-	constexpr int TestFrameCount = 40;
+	constexpr int TestFrameCount = 400;
 	constexpr auto FrameDelay = std::chrono::milliseconds(150);
 
 	std::cout << "\x1B[2J\x1B[H\x1B[?25l";
@@ -48,17 +49,32 @@ void Game::StartNewSession()
 
 void Game::HandleInput()
 {
+	if (!_kbhit())
+		return;
+
+	const int key = _getch();
+
+	if (key == 'a' || key == 'A')
+	{
+		TryMoveCurrentPiece(-1, 0, false);
+	}
+	else if (key == 'd' || key == 'D')
+	{
+		TryMoveCurrentPiece(1, 0, false);
+	}
+	else if (key == 'z' || key == 'Z')
+	{
+		TryRotateCurrentPieceCW();
+	}
+	else if (key == 's' || key == 'S')
+	{
+		TryMoveCurrentPiece(0, 1, true);
+	}
 }
 
 void Game::Update()
 {
-	m_currentPiece.Move(0, 1);
-
-	if (!m_board.CanPlace(m_currentPiece))
-	{
-		m_currentPiece.Move(0, -1);
-		m_isLockRequired = true;
-	}
+	TryMoveCurrentPiece(0, 1, true);
 
 	if (m_isLockRequired)
 		ProcessLockAndResolve();
@@ -129,6 +145,32 @@ void Game::ProcessLockAndResolve()
 
 	if (!m_board.CanPlace(m_currentPiece))
 		m_state = GameState::GameOver;
+}
+
+bool Game::TryMoveCurrentPiece(int dx, int dy, bool lockOnFail)
+{
+	m_currentPiece.Move(dx, dy);
+
+	if (m_board.CanPlace(m_currentPiece))
+		return true;
+
+	m_currentPiece.Move(-dx, -dy);
+
+	if (lockOnFail)
+		m_isLockRequired = true;
+
+	return false;
+}
+
+bool Game::TryRotateCurrentPieceCW()
+{
+	m_currentPiece.RotateCW();
+
+	if (m_board.CanPlace(m_currentPiece))
+		return true;
+
+	m_currentPiece.RotateCCW();
+	return false;
 }
 
 TetrominoType Game::CreateRandomTetrominoType()

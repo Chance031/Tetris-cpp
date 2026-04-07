@@ -27,6 +27,8 @@ private:
 	void SpawnNextPiece();
 	void ProcessLockAndResolve();
 
+	bool TryMoveCurrentPiece(int dx, int dy, bool lockOnFail);
+	bool TryRotateCurrentPieceCW();
 	TetrominoType CreateRandomTetrominoType();
 
 private:
@@ -35,7 +37,7 @@ private:
 	Tetromino m_nextPiece;
 
 	GameState m_state = GameState::Title;
-	bool m_isLockRequired = false;	// true이면 다음 Update()에서 현재 블록을 보드에 고정한다.
+	bool m_isLockRequired = false; // true이면 다음 Update()에서 현재 블록을 보드에 고정한다.
 
 	int m_score = 0;
 	int m_level = 1;
@@ -44,4 +46,3 @@ private:
 	std::mt19937 m_randomEngine;
 	std::uniform_int_distribution<int> m_pieceDistribution{ 0, 6 };
 };
-
