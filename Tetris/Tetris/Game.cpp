@@ -6,6 +6,16 @@
 #include <thread>
 #include <conio.h>
 
+namespace
+{
+	constexpr int KeyEscape = 27;
+	constexpr int KeyExtendedPrefix = 224;
+	constexpr int KeyExtendedPrefixAlt = 0;
+	constexpr int KeyArrowLeft = 75;
+	constexpr int KeyArrowRight = 77;
+	constexpr int KeyArrowDown = 80;
+}
+
 Game::Game() : m_randomEngine(std::random_device{}())
 {
 }
@@ -18,7 +28,7 @@ void Game::Initialize()
 void Game::Run()
 {
 	constexpr int TestFrameCount = 400;
-	constexpr auto FrameDelay = std::chrono::milliseconds(150);
+	constexpr auto FrameDelay = std::chrono::milliseconds(50);
 
 	std::cout << "\x1B[2J\x1B[H\x1B[?25l";
 
@@ -43,6 +53,8 @@ void Game::StartNewSession()
 	m_isLockRequired = false;
 	m_state = GameState::Playing;
 
+	m_lastFallTime = std::chrono::steady_clock::now();
+
 	m_nextPiece = Tetromino(CreateRandomTetrominoType());
 	SpawnNextPiece();
 }
@@ -52,28 +64,53 @@ void Game::HandleInput()
 	if (!_kbhit())
 		return;
 
-	const int key = _getch();
+	int key = _getch();
 
-	if (key == 'a' || key == 'A')
+	if (key == KeyEscape || key == 'q' || key == 'Q')
 	{
-		TryMoveCurrentPiece(-1, 0, false);
+		m_state = GameState::GameOver;
+		return;
 	}
-	else if (key == 'd' || key == 'D')
+
+	if (key == KeyExtendedPrefix || key == KeyExtendedPrefixAlt)
 	{
-		TryMoveCurrentPiece(1, 0, false);
+		key = _getch();
+
+		switch (key)
+		{
+		case KeyArrowLeft:
+			TryMoveCurrentPiece(-1, 0, false);
+			break;
+		case KeyArrowRight:
+			TryMoveCurrentPiece(1, 0, false);
+			break;
+		case KeyArrowDown:
+			TryMoveCurrentPiece(0, 1, true);
+			break;
+		}
+
+		return;
 	}
-	else if (key == 'z' || key == 'Z')
+
+	if (key == 'z' || key == 'Z')
 	{
 		TryRotateCurrentPieceCW();
 	}
-	else if (key == 's' || key == 'S')
+	else if (key == ' ')
 	{
-		TryMoveCurrentPiece(0, 1, true);
+		HardDropCurrentPiece();
 	}
 }
 
 void Game::Update()
 {
+	const auto now = std::chrono::steady_clock::now();
+
+	if (now - m_lastFallTime < m_fallInterval)
+		return;
+
+	m_lastFallTime = now;
+
 	TryMoveCurrentPiece(0, 1, true);
 
 	if (m_isLockRequired)
@@ -171,6 +208,15 @@ bool Game::TryRotateCurrentPieceCW()
 
 	m_currentPiece.RotateCCW();
 	return false;
+}
+
+void Game::HardDropCurrentPiece()
+{
+	while (TryMoveCurrentPiece(0, 1, false))
+	{
+	}
+
+	m_isLockRequired = true;
 }
 
 TetrominoType Game::CreateRandomTetrominoType()

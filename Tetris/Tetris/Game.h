@@ -4,6 +4,7 @@
 #include "Tetromino.h"
 #include "Types.h"
 
+#include <chrono>
 #include <random>
 
 // Game 루프 전체를 조율하는 최상위 클래스다.
@@ -29,6 +30,7 @@ private:
 
 	bool TryMoveCurrentPiece(int dx, int dy, bool lockOnFail);
 	bool TryRotateCurrentPieceCW();
+	void HardDropCurrentPiece();
 	TetrominoType CreateRandomTetrominoType();
 
 private:
@@ -42,6 +44,9 @@ private:
 	int m_score = 0;
 	int m_level = 1;
 	int m_totalLines = 0;
+
+	std::chrono::steady_clock::time_point m_lastFallTime;
+	std::chrono::milliseconds m_fallInterval{ 800 };
 
 	std::mt19937 m_randomEngine;
 	std::uniform_int_distribution<int> m_pieceDistribution{ 0, 6 };
