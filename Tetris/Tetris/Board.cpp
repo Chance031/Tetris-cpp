@@ -81,3 +81,8 @@ bool Board::IsCellEmpty(Point point) const
 {
 	return IsInside(point) && m_cells[point.y][point.x] == 0;
 }
+
+bool Board::IsCellFilled(Point point) const
+{
+	return IsInside(point) && m_cells[point.y][point.x] != 0;
+}

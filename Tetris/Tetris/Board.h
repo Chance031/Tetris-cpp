@@ -23,6 +23,7 @@ public:
 
 	bool IsInside(Point point) const;
 	bool IsCellEmpty(Point point) const;
+	bool IsCellFilled(Point point) const;
 
 private:
 	// 0은 빈 칸, 1은 고정된 블록이 있는 칸을 뜻한다.
