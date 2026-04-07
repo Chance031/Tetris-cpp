@@ -3,12 +3,20 @@
   "WorkspaceRootPath": "C:\\Users\\aday0\\Desktop\\Tetris-cpp\\Tetris\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{97C78342-CD3E-4241-A750-55045B5D210F}|Tetris\\Tetris.vcxproj|C:\\Users\\aday0\\Desktop\\Tetris-cpp\\Tetris\\Tetris\\Tetromino.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{97C78342-CD3E-4241-A750-55045B5D210F}|Tetris\\Tetris.vcxproj|solutionrelative:Tetris\\Tetromino.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{97C78342-CD3E-4241-A750-55045B5D210F}|Tetris\\Tetris.vcxproj|C:\\Users\\aday0\\Desktop\\Tetris-cpp\\Tetris\\Tetris\\Tetromino.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{97C78342-CD3E-4241-A750-55045B5D210F}|Tetris\\Tetris.vcxproj|solutionrelative:Tetris\\Tetromino.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{97C78342-CD3E-4241-A750-55045B5D210F}|Tetris\\Tetris.vcxproj|C:\\Users\\aday0\\Desktop\\Tetris-cpp\\Tetris\\Tetris\\Tetromino.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{97C78342-CD3E-4241-A750-55045B5D210F}|Tetris\\Tetris.vcxproj|solutionrelative:Tetris\\Tetromino.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{97C78342-CD3E-4241-A750-55045B5D210F}|Tetris\\Tetris.vcxproj|C:\\Users\\aday0\\Desktop\\Tetris-cpp\\Tetris\\Tetris\\Board.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{97C78342-CD3E-4241-A750-55045B5D210F}|Tetris\\Tetris.vcxproj|solutionrelative:Tetris\\Board.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{97C78342-CD3E-4241-A750-55045B5D210F}|Tetris\\Tetris.vcxproj|C:\\Users\\aday0\\Desktop\\Tetris-cpp\\Tetris\\Tetris\\Board.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{97C78342-CD3E-4241-A750-55045B5D210F}|Tetris\\Tetris.vcxproj|solutionrelative:Tetris\\Board.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{97C78342-CD3E-4241-A750-55045B5D210F}|Tetris\\Tetris.vcxproj|C:\\Users\\aday0\\Desktop\\Tetris-cpp\\Tetris\\Tetris\\Types.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
@@ -26,37 +34,63 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
+              "Title": "Board.cpp",
+              "DocumentMoniker": "C:\\Users\\aday0\\Desktop\\Tetris-cpp\\Tetris\\Tetris\\Board.cpp",
+              "RelativeDocumentMoniker": "Tetris\\Board.cpp",
+              "ToolTip": "C:\\Users\\aday0\\Desktop\\Tetris-cpp\\Tetris\\Tetris\\Board.cpp",
+              "RelativeToolTip": "Tetris\\Board.cpp",
+              "ViewState": "AgIAAB4AAAAAAAAAAAAAAEIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2026-04-07T13:39:23.471Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Board.h",
+              "DocumentMoniker": "C:\\Users\\aday0\\Desktop\\Tetris-cpp\\Tetris\\Tetris\\Board.h",
+              "RelativeDocumentMoniker": "Tetris\\Board.h",
+              "ToolTip": "C:\\Users\\aday0\\Desktop\\Tetris-cpp\\Tetris\\Tetris\\Board.h",
+              "RelativeToolTip": "Tetris\\Board.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABoAAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2026-04-07T13:39:16.518Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
               "Title": "Tetromino.cpp",
               "DocumentMoniker": "C:\\Users\\aday0\\Desktop\\Tetris-cpp\\Tetris\\Tetris\\Tetromino.cpp",
               "RelativeDocumentMoniker": "Tetris\\Tetromino.cpp",
               "ToolTip": "C:\\Users\\aday0\\Desktop\\Tetris-cpp\\Tetris\\Tetris\\Tetromino.cpp",
               "RelativeToolTip": "Tetris\\Tetromino.cpp",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABoAAAATAAAAAAAAAA==",
+              "ViewState": "AgIAAL0AAAAAAAAAAAAAAOkAAAAaAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2026-04-07T09:12:53.437Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "Tetromino.h",
               "DocumentMoniker": "C:\\Users\\aday0\\Desktop\\Tetris-cpp\\Tetris\\Tetris\\Tetromino.h",
               "RelativeDocumentMoniker": "Tetris\\Tetromino.h",
               "ToolTip": "C:\\Users\\aday0\\Desktop\\Tetris-cpp\\Tetris\\Tetris\\Tetromino.h",
               "RelativeToolTip": "Tetris\\Tetromino.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAASAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2026-04-07T09:12:31.396Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 4,
               "Title": "Types.h",
               "DocumentMoniker": "C:\\Users\\aday0\\Desktop\\Tetris-cpp\\Tetris\\Tetris\\Types.h",
               "RelativeDocumentMoniker": "Tetris\\Types.h",
@@ -64,12 +98,11 @@
               "RelativeToolTip": "Tetris\\Types.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAB0AAAAGAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-04-07T09:02:43.07Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-07T09:02:43.07Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 5,
               "Title": "main.cpp",
               "DocumentMoniker": "C:\\Users\\aday0\\Desktop\\Tetris-cpp\\Tetris\\Tetris\\main.cpp",
               "RelativeDocumentMoniker": "Tetris\\main.cpp",
@@ -77,8 +110,7 @@
               "RelativeToolTip": "Tetris\\main.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-04-07T08:38:00.112Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-07T08:38:00.112Z"
             }
           ]
         }
