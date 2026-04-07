@@ -13,6 +13,14 @@ C++로 만드는 콘솔 테트리스 프로젝트
 
 ---
 
+## 📐 설계 문서
+
+| 문서 | 설명 |
+|------|------|
+| [📊 플로우차트 (draw.io로 열기)](https://app.diagrams.net/?url=https://raw.githubusercontent.com/Chance031/Tetris-cpp/main/Tetris.drawio) | 게임 전체 상태 흐름, 플레이 루프, 입력 처리, 충돌 판정, 정산 시퀀스, UML (6페이지) |
+
+---
+
 ## 📅 개발 일지
 
 <!-- GANTT_START -->
@@ -22,8 +30,6 @@ gantt
     dateFormat YYYY-MM-DD
     section 시작
         프로젝트 초기화 :done, init, 2025-04-07, 1d
-    section flowchart
-        플로우차트 :done, t84797, 2026-04-07, 1d
 ```
 <!-- GANTT_END -->
 
@@ -49,5 +55,4 @@ gantt
 | 날짜 | 섹션 | 작업 내용 |
 |------|------|-----------|
 | 2025-04-07 | 시작 | 프로젝트 초기화 |
-| 2026-04-07 | flowchart | 플로우차트 |
 <!-- LOG_END -->
