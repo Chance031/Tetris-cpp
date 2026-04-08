@@ -158,7 +158,8 @@ void Game::HandleInput()
 			TryMoveCurrentPiece(1, 0, false);
 			break;
 		case KeyArrowDown:
-			TryMoveCurrentPiece(0, 1, true);
+			if (TryMoveCurrentPiece(0, 1, true))
+				m_score += SoftDropScorePerCell;
 			break;
 		}
 

@@ -54,6 +54,7 @@ private:
 	static constexpr int MinFallIntervalMs = 100;
 	static constexpr int LockDelayMs = 500;
 	static constexpr int MaxLockResetCount = 15;
+	static constexpr int SoftDropScorePerCell = 1;
 
 	Board m_board;
 	Tetromino m_currentPiece;
