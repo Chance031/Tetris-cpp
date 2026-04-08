@@ -198,6 +198,55 @@ namespace
 		}
 	};
 }
+std::array<Point, 5> GetSrsKicks(TetrominoType type, int oldRotationIndex, RotationDirection direction)
+{
+	const bool isClockwise = direction == RotationDirection::Clockwise;
+
+	if (type == TetrominoType::I)
+	{
+		switch (oldRotationIndex)
+		{
+		case 0:
+			return isClockwise
+				? std::array<Point, 5>{ Point{ 0, 0 }, Point{ -2, 0 }, Point{ 1, 0 }, Point{ -2, 1 }, Point{ 1, -2 } }
+				: std::array<Point, 5>{ Point{ 0, 0 }, Point{ -1, 0 }, Point{ 2, 0 }, Point{ -1, -2 }, Point{ 2, 1 } };
+		case 1:
+			return isClockwise
+				? std::array<Point, 5>{ Point{ 0, 0 }, Point{ -1, 0 }, Point{ 2, 0 }, Point{ -1, -2 }, Point{ 2, 1 } }
+				: std::array<Point, 5>{ Point{ 0, 0 }, Point{ -2, 0 }, Point{ 1, 0 }, Point{ -2, 1 }, Point{ 1, -2 } };
+		case 2:
+			return isClockwise
+				? std::array<Point, 5>{ Point{ 0, 0 }, Point{ 2, 0 }, Point{ -1, 0 }, Point{ 2, -1 }, Point{ -1, 2 } }
+				: std::array<Point, 5>{ Point{ 0, 0 }, Point{ 1, 0 }, Point{ -2, 0 }, Point{ 1, 2 }, Point{ -2, -1 } };
+		case 3:
+			return isClockwise
+				? std::array<Point, 5>{ Point{ 0, 0 }, Point{ 1, 0 }, Point{ -2, 0 }, Point{ 1, 2 }, Point{ -2, -1 } }
+				: std::array<Point, 5>{ Point{ 0, 0 }, Point{ 2, 0 }, Point{ -1, 0 }, Point{ 2, -1 }, Point{ -1, 2 } };
+		}
+	}
+
+	switch (oldRotationIndex)
+	{
+	case 0:
+		return isClockwise
+			? std::array<Point, 5>{ Point{ 0, 0 }, Point{ -1, 0 }, Point{ -1, -1 }, Point{ 0, 2 }, Point{ -1, 2 } }
+			: std::array<Point, 5>{ Point{ 0, 0 }, Point{ 1, 0 }, Point{ 1, -1 }, Point{ 0, 2 }, Point{ 1, 2 } };
+	case 1:
+		return isClockwise
+			? std::array<Point, 5>{ Point{ 0, 0 }, Point{ 1, 0 }, Point{ 1, 1 }, Point{ 0, -2 }, Point{ 1, -2 } }
+			: std::array<Point, 5>{ Point{ 0, 0 }, Point{ -1, 0 }, Point{ -1, 1 }, Point{ 0, -2 }, Point{ -1, -2 } };
+	case 2:
+		return isClockwise
+			? std::array<Point, 5>{ Point{ 0, 0 }, Point{ 1, 0 }, Point{ 1, -1 }, Point{ 0, 2 }, Point{ 1, 2 } }
+			: std::array<Point, 5>{ Point{ 0, 0 }, Point{ -1, 0 }, Point{ -1, -1 }, Point{ 0, 2 }, Point{ -1, 2 } };
+	case 3:
+		return isClockwise
+			? std::array<Point, 5>{ Point{ 0, 0 }, Point{ -1, 0 }, Point{ -1, 1 }, Point{ 0, -2 }, Point{ -1, -2 } }
+			: std::array<Point, 5>{ Point{ 0, 0 }, Point{ 1, 0 }, Point{ 1, 1 }, Point{ 0, -2 }, Point{ 1, -2 } };
+	default:
+		return {};
+	}
+}
 
 Tetromino::Tetromino(TetrominoType type) : m_type(type)
 {

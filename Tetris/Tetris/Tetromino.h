@@ -34,3 +34,5 @@ private:
 	// 내부에서는 0~3 회전 인덱스로 저장하고, 외부에는 각도(0, 90, 180, 270)로 반환한다.
 	int m_rotation = 0;
 };
+
+std::array<Point, 5> GetSrsKicks(TetrominoType type, int oldRotationIndex, RotationDirection direction);

@@ -1,8 +1,10 @@
 #include "Game.h"
+#include "Renderer.h"
 
 #include <algorithm>
 #include <array>
 #include <chrono>
+#include <fstream>
 #include <iostream>
 #include <sstream>
 #include <thread>
@@ -20,151 +22,6 @@ namespace
 	constexpr int KeyArrowLeft = 75;
 	constexpr int KeyArrowRight = 77;
 	constexpr int KeyArrowDown = 80;
-	constexpr int NextPiecePreviewSize = 4;
-
-	bool ContainsPoint(const std::array<Point, 4>& blocks, Point point)
-	{
-		for (const Point& block : blocks)
-		{
-			if (block.x == point.x && block.y == point.y)
-				return true;
-		}
-
-		return false;
-	}
-
-
-	void AppendColoredCell(std::ostringstream& frame, char cell)
-	{
-		switch (cell)
-		{
-		case '@':
-			frame << "\x1B[36m@\x1B[0m";
-			break;
-		case '#':
-			frame << "\x1B[37m#\x1B[0m";
-			break;
-		case '+':
-			frame << "\x1B[90m+\x1B[0m";
-			break;
-		default:
-			frame << cell;
-			break;
-		}
-	}
-	char GetBoardCellDisplay(const Board& board, const std::array<Point, 4>& currentBlocks, const std::array<Point, 4>& ghostBlocks, Point point)
-	{
-		if (ContainsPoint(currentBlocks, point))
-			return '@';
-
-		if (board.IsCellFilled(point))
-			return '#';
-
-		if (ContainsPoint(ghostBlocks, point))
-			return '+';
-
-		return '.';
-	}
-
-	void RenderPiecePreviewRow(std::ostringstream& frame, const std::array<Point, 4>& blocks, int previewY)
-	{
-		frame << "   ";
-
-		for (int previewX = 0; previewX < NextPiecePreviewSize; ++previewX)
-		{
-			Point previewPoint{ previewX, previewY };
-			AppendColoredCell(frame, ContainsPoint(blocks, previewPoint) ? '@' : '.');
-		}
-	}
-
-	void RenderBoardRow(std::ostringstream& frame, const Board& board, const std::array<Point, 4>& currentBlocks, const std::array<Point, 4>& ghostBlocks, int y)
-	{
-		for (int x = 0; x < Board::Width; ++x)
-		{
-			Point currentPoint{ x, y };
-			AppendColoredCell(frame, GetBoardCellDisplay(board, currentBlocks, ghostBlocks, currentPoint));
-		}
-	}
-
-	void RenderSidePanelRow(std::ostringstream& frame, const std::array<Point, 4>& nextBlocks, const std::array<Point, 4>& holdBlocks, bool hasHoldPiece, int y)
-	{
-		if (y == 0)
-		{
-			frame << "   Next Piece";
-		}
-		else if (y >= 1 && y <= 4)
-		{
-			RenderPiecePreviewRow(frame, nextBlocks, y - 1);
-		}
-		else if (y == 6)
-		{
-			frame << "   Hold Piece";
-		}
-		else if (y >= 7 && y <= 10)
-		{
-			if (hasHoldPiece)
-				RenderPiecePreviewRow(frame, holdBlocks, y - 7);
-			else
-				frame << "   ....";
-		}
-	}
-
-	void RenderStatusMessage(std::ostringstream& frame, GameState state)
-	{
-		if (state == GameState::Paused)
-			frame << "\nPaused - Press P to resume, Q/Esc to quit\n";
-		else if (state == GameState::GameOver)
-			frame << "\nGame Over - Press R to restart, Q/Esc to quit\n";
-	}
-	std::array<Point, 5> GetSrsKicks(TetrominoType type, int oldRotationIndex, RotationDirection direction)
-	{
-		const bool isClockwise = direction == RotationDirection::Clockwise;
-
-		if (type == TetrominoType::I)
-		{
-			switch (oldRotationIndex)
-			{
-			case 0:
-				return isClockwise
-					? std::array<Point, 5>{ Point{ 0, 0 }, Point{ -2, 0 }, Point{ 1, 0 }, Point{ -2, 1 }, Point{ 1, -2 } }
-					: std::array<Point, 5>{ Point{ 0, 0 }, Point{ -1, 0 }, Point{ 2, 0 }, Point{ -1, -2 }, Point{ 2, 1 } };
-			case 1:
-				return isClockwise
-					? std::array<Point, 5>{ Point{ 0, 0 }, Point{ -1, 0 }, Point{ 2, 0 }, Point{ -1, -2 }, Point{ 2, 1 } }
-					: std::array<Point, 5>{ Point{ 0, 0 }, Point{ -2, 0 }, Point{ 1, 0 }, Point{ -2, 1 }, Point{ 1, -2 } };
-			case 2:
-				return isClockwise
-					? std::array<Point, 5>{ Point{ 0, 0 }, Point{ 2, 0 }, Point{ -1, 0 }, Point{ 2, -1 }, Point{ -1, 2 } }
-					: std::array<Point, 5>{ Point{ 0, 0 }, Point{ 1, 0 }, Point{ -2, 0 }, Point{ 1, 2 }, Point{ -2, -1 } };
-			case 3:
-				return isClockwise
-					? std::array<Point, 5>{ Point{ 0, 0 }, Point{ 1, 0 }, Point{ -2, 0 }, Point{ 1, 2 }, Point{ -2, -1 } }
-					: std::array<Point, 5>{ Point{ 0, 0 }, Point{ 2, 0 }, Point{ -1, 0 }, Point{ 2, -1 }, Point{ -1, 2 } };
-			}
-		}
-
-		switch (oldRotationIndex)
-		{
-		case 0:
-			return isClockwise
-				? std::array<Point, 5>{ Point{ 0, 0 }, Point{ -1, 0 }, Point{ -1, -1 }, Point{ 0, 2 }, Point{ -1, 2 } }
-				: std::array<Point, 5>{ Point{ 0, 0 }, Point{ 1, 0 }, Point{ 1, -1 }, Point{ 0, 2 }, Point{ 1, 2 } };
-		case 1:
-			return isClockwise
-				? std::array<Point, 5>{ Point{ 0, 0 }, Point{ 1, 0 }, Point{ 1, 1 }, Point{ 0, -2 }, Point{ 1, -2 } }
-				: std::array<Point, 5>{ Point{ 0, 0 }, Point{ -1, 0 }, Point{ -1, 1 }, Point{ 0, -2 }, Point{ -1, -2 } };
-		case 2:
-			return isClockwise
-				? std::array<Point, 5>{ Point{ 0, 0 }, Point{ 1, 0 }, Point{ 1, -1 }, Point{ 0, 2 }, Point{ 1, 2 } }
-				: std::array<Point, 5>{ Point{ 0, 0 }, Point{ -1, 0 }, Point{ -1, -1 }, Point{ 0, 2 }, Point{ -1, 2 } };
-		case 3:
-			return isClockwise
-				? std::array<Point, 5>{ Point{ 0, 0 }, Point{ -1, 0 }, Point{ -1, 1 }, Point{ 0, -2 }, Point{ -1, -2 } }
-				: std::array<Point, 5>{ Point{ 0, 0 }, Point{ 1, 0 }, Point{ 1, 1 }, Point{ 0, -2 }, Point{ 1, -2 } };
-		default:
-			return {};
-		}
-	}
 }
 
 Game::Game() : m_randomEngine(std::random_device{}())
@@ -173,7 +30,13 @@ Game::Game() : m_randomEngine(std::random_device{}())
 
 void Game::Initialize()
 {
-	m_state = GameState::Title;
+	LoadHighScores();
+	TransitionTo(GameState::Title);
+}
+
+void Game::TransitionTo(GameState newState)
+{
+	m_state = newState;
 }
 
 void Game::Run()
@@ -211,7 +74,7 @@ void Game::Run()
 		else if (m_state == GameState::GameOver)
 			HandleGameOverInput();
 		else if (m_state != GameState::Exit)
-			m_state = GameState::Exit;
+			TransitionTo(GameState::Exit);
 	}
 
 	Render();
@@ -233,7 +96,7 @@ void Game::StartNewSession()
 	ResetLockDelay();
 	m_hasHoldPiece = false;
 	m_canHold = true;
-	m_state = GameState::Playing;
+	TransitionTo(GameState::Playing);
 
 	m_fallInterval = std::chrono::milliseconds(InitialFallIntervalMs);
 	m_lastFallTime = std::chrono::steady_clock::now();
@@ -251,13 +114,13 @@ void Game::HandleInput()
 
 	if (key == KeyEscape || key == 'q' || key == 'Q')
 	{
-		m_state = GameState::Exit;
+		TransitionTo(GameState::Exit);
 		return;
 	}
 
 	if (key == 'p' || key == 'P')
 	{
-		m_state = GameState::Paused;
+		TransitionTo(GameState::Paused);
 		return;
 	}
 
@@ -314,7 +177,7 @@ void Game::HandleTitleInput()
 		}
 		else if (key == KeyEscape || key == 'q' || key == 'Q')
 		{
-			m_state = GameState::Exit;
+			TransitionTo(GameState::Exit);
 		}
 	}
 }
@@ -327,7 +190,7 @@ void Game::HandlePausedInput()
 
 		if (key == 'p' || key == 'P')
 		{
-			m_state = GameState::Playing;
+			TransitionTo(GameState::Playing);
 			m_lastFallTime = std::chrono::steady_clock::now();
 
 			if (m_isTouchingGround)
@@ -335,7 +198,7 @@ void Game::HandlePausedInput()
 		}
 		else if (key == KeyEscape || key == 'q' || key == 'Q')
 		{
-			m_state = GameState::Exit;
+			TransitionTo(GameState::Exit);
 		}
 	}
 }
@@ -358,7 +221,7 @@ void Game::HandleGameOverInput()
 		}
 		else if (key == KeyEscape || key == 'q' || key == 'Q')
 		{
-			m_state = GameState::Exit;
+			TransitionTo(GameState::Exit);
 		}
 	}
 }
@@ -427,14 +290,14 @@ void Game::Render()
 
 	for (int y = 0; y < Board::Height; ++y)
 	{
-		RenderBoardRow(frame, m_board, currentBlocks, ghostBlocks, y);
-		RenderSidePanelRow(frame, nextBlocks, holdBlocks, m_hasHoldPiece, y);
+		Renderer::RenderBoardRow(frame, m_board, currentBlocks, ghostBlocks, y);
+		Renderer::RenderSidePanelRow(frame, nextBlocks, holdBlocks, m_hasHoldPiece, y);
 		frame << '\n';
 	}
 
 	frame << "\nControls: Left/Right = Move, Down = Soft Drop, Z/X = Rotate, Space = Hard Drop, C = Hold, P = Pause, Q/Esc = Quit\n";
 
-	RenderStatusMessage(frame, m_state);
+	Renderer::RenderStatusMessage(frame, m_state);
 
 	if (m_state == GameState::GameOver)
 		RenderHighScores(frame);
@@ -468,7 +331,7 @@ void Game::PromptAndSaveHighScore()
 			continue;
 		}
 
-		if (key < 32 || key > 126)
+		if (key <= 32 || key > 126)
 			continue;
 
 		if (static_cast<int>(name.size()) >= MaxPlayerNameLength)
@@ -495,8 +358,32 @@ void Game::AddHighScore(const std::string& name, int score)
 
 	if (static_cast<int>(m_highScores.size()) > MaxHighScoreCount)
 		m_highScores.resize(MaxHighScoreCount);
+
+	SaveHighScores();
 }
 
+void Game::SaveHighScores() const
+{
+	std::ofstream file("scores.txt");
+
+	for (const HighScoreEntry& entry : m_highScores)
+		file << entry.name << ' ' << entry.score << '\n';
+}
+
+void Game::LoadHighScores()
+{
+	std::ifstream file("scores.txt");
+
+	if (!file.is_open())
+		return;
+
+	m_highScores.clear();
+	std::string name;
+	int score = 0;
+
+	while (file >> name >> score)
+		m_highScores.push_back({ name, score });
+}
 void Game::RenderHighScores(std::ostringstream& frame) const
 {
 	frame << "\nHigh Scores\n";
@@ -627,7 +514,7 @@ void Game::ProcessLockAndResolve()
 
 	if (!m_board.CanPlace(m_currentPiece))
 	{
-		m_state = GameState::GameOver;
+		TransitionTo(GameState::GameOver);
 		m_needsHighScoreName = true;
 	}
 }
@@ -796,7 +683,7 @@ void Game::HoldCurrentPiece()
 
 	if (!m_board.CanPlace(m_currentPiece))
 	{
-		m_state = GameState::GameOver;
+		TransitionTo(GameState::GameOver);
 		m_needsHighScoreName = true;
 	}
 }

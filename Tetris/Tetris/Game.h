@@ -40,6 +40,9 @@ private:
 	void PromptAndSaveHighScore();
 	void AddHighScore(const std::string& name, int score);
 	void RenderHighScores(std::ostringstream& frame) const;
+	void SaveHighScores() const;
+	void LoadHighScores();
+	void TransitionTo(GameState newState);
 
 	int CalculateScore(int clearedLines) const;
 	int CalculateTSpinScore(int clearedLines) const;
