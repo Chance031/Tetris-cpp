@@ -169,6 +169,12 @@ void Game::HandleInput()
 	{
 		HoldCurrentPiece();
 	}
+#ifdef _DEBUG
+	else if (key == 'b' || key == 'B')
+	{
+		m_board.FillDebugLine(Board::Height - 1, Board::Width / 2);
+	}
+#endif
 }
 
 void Game::HandleTitleInput()
@@ -292,6 +298,9 @@ void Game::Render()
 	}
 
 	frame << "\nControls: Left/Right = Move, Down = Soft Drop, Z = Rotate, Space = Hard Drop, C = Hold, Q/Esc = Quit\n";
+#ifdef _DEBUG
+	frame << "Debug: B = Fill Bottom Line\n";
+#endif
 
 	if (m_state == GameState::GameOver)
 		frame << "\nGame Over - Press R to restart, Q/Esc to quit\n";
