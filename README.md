@@ -26,28 +26,30 @@ C++로 만드는 콘솔 테트리스 프로젝트
 <!-- GANTT_START -->
 ```mermaid
 gantt
- title 테트리스 개발 일정
- dateFormat YYYY-MM-DD
- section 시작
- 프로젝트 초기화 :done, init, 2026-04-07, 1d
- section Tetromino
- Tetromino .h / .cpp 구현 :done, t16803, 2026-04-07, 1d
- section Board
- Board .h / .cpp 구현 :done, t84048, 2026-04-07, 1d
- section 리팩토링
- 코드 리뷰 반영 및 리팩토링 :done, refactor, 2026-04-07, 1d
- section Game
- Game .h / .cpp 구현 :done, t91896, 2026-04-08, 1d
- section Render / Update
- 렌더링 및 업데이트 구현 :done, t47867, 2026-04-08, 1d
- section Input
- 키보드 입력 구현 및 수정 :done, t8258, 2026-04-08, 1d
- section Level / Score
- 레벨업, 낙하속도, 점수, 다음블록 초기화 :done, t44367, 2026-04-08, 1d
- section UI / GameOver
- 미리보기 위치 변경, 게임오버 후 재시작 기능 :done, t55123, 2026-04-08, 1d
- section 품질 개선
- 매직 넘버 상수화, Wall Kick, UpdateLevel 단순화 :done, t66234, 2026-04-08, 1d
+    title 테트리스 개발 일정
+    dateFormat YYYY-MM-DD
+    section 시작
+        프로젝트 초기화 :done, init, 2026-04-07, 1d
+    section Tetromino
+        Tetromino .h / .cpp 구현 :done, t16803, 2026-04-07, 1d
+    section Board
+        Board .h / .cpp 구현 :done, t84048, 2026-04-07, 1d
+    section 리팩토링
+        코드 리뷰 반영 및 리팩토링 :done, refactor, 2026-04-07, 1d
+    section Game
+        Game .h / .cpp 구현 :done, t91896, 2026-04-08, 1d
+    section Render / Update
+        렌더링 및 업데이트 구현 :done, t47867, 2026-04-08, 1d
+    section Input
+        키보드 입력 구현 및 수정 :done, t8258, 2026-04-08, 1d
+    section Level / Score
+        레벨업, 낙하속도, 점수, 다음블록 초기화 :done, t44367, 2026-04-08, 1d
+    section UI / GameOver
+        미리보기 위치 변경, 게임오버 후 재시작 기능 :done, t55123, 2026-04-08, 1d
+    section 품질 개선
+        매직 넘버 상수화, Wall Kick, UpdateLevel 단순화 :done, t66234, 2026-04-08, 1d
+    section FallInterval
+        낙하 속도 매직 넘버 상수화 :active, t66782, 2026-04-08, 1d
 ```
 <!-- GANTT_END -->
 
@@ -72,7 +74,7 @@ gantt
 ## 📝 작업 로그
 
 <!-- LOG_START -->
-| 날짜 | 타입 | 작업 내용 |
+| 날짜 | 섹션 | 작업 내용 |
 |------|------|-----------|
 | 2026-04-07 | feat | 프로젝트 초기화 |
 | 2026-04-07 | feat | Tetromino .h / .cpp 구현 |
@@ -91,4 +93,5 @@ gantt
 | 2026-04-08 | refactor | 낙하 속도 매직 넘버 상수화 |
 | 2026-04-08 | feat | TryRotateCurrentPieceCW에 Wall Kick 추가 |
 | 2026-04-08 | refactor | UpdateLevel() std::max로 단순화 |
+| 2026-04-08 | FallInterval | 낙하 속도 매직 넘버 상수화 |
 <!-- LOG_END -->
