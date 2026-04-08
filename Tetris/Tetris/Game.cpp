@@ -240,7 +240,7 @@ void Game::Render()
 	const auto nextBlocks = m_nextPiece.GetBlockLocations();
 	std::ostringstream frame;
 
-	frame << "\x1B[H";
+	frame << "\x1B[H\x1B[J";
 	frame << "Score: " << m_score
 		<< "  Level: " << m_level
 		<< "  Lines: " << m_totalLines << '\n';
