@@ -50,6 +50,8 @@ gantt
         매직 넘버 상수화, Wall Kick, UpdateLevel 단순화 :done, t66234, 2026-04-08, 1d
     section FallInterval
         낙하 속도 매직 넘버 상수화 :active, t66782, 2026-04-08, 1d
+    section MagicNumber
+        매직 넘버 상수화 :active, t23180, 2026-04-08, 1d
 ```
 <!-- GANTT_END -->
 
@@ -94,4 +96,5 @@ gantt
 | 2026-04-08 | feat | TryRotateCurrentPieceCW에 Wall Kick 추가 |
 | 2026-04-08 | refactor | UpdateLevel() std::max로 단순화 |
 | 2026-04-08 | FallInterval | 낙하 속도 매직 넘버 상수화 |
+| 2026-04-08 | MagicNumber | 매직 넘버 상수화 |
 <!-- LOG_END -->
