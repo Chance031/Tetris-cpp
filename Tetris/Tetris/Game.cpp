@@ -54,6 +54,46 @@ namespace
 			frame << (ContainsPoint(blocks, previewPoint) ? '@' : '.');
 		}
 	}
+
+	void RenderBoardRow(std::ostringstream& frame, const Board& board, const std::array<Point, 4>& currentBlocks, const std::array<Point, 4>& ghostBlocks, int y)
+	{
+		for (int x = 0; x < Board::Width; ++x)
+		{
+			Point currentPoint{ x, y };
+			frame << GetBoardCellDisplay(board, currentBlocks, ghostBlocks, currentPoint);
+		}
+	}
+
+	void RenderSidePanelRow(std::ostringstream& frame, const std::array<Point, 4>& nextBlocks, const std::array<Point, 4>& holdBlocks, bool hasHoldPiece, int y)
+	{
+		if (y == 0)
+		{
+			frame << "   Next Piece";
+		}
+		else if (y >= 1 && y <= 4)
+		{
+			RenderPiecePreviewRow(frame, nextBlocks, y - 1);
+		}
+		else if (y == 6)
+		{
+			frame << "   Hold Piece";
+		}
+		else if (y >= 7 && y <= 10)
+		{
+			if (hasHoldPiece)
+				RenderPiecePreviewRow(frame, holdBlocks, y - 7);
+			else
+				frame << "   ....";
+		}
+	}
+
+	void RenderStatusMessage(std::ostringstream& frame, GameState state)
+	{
+		if (state == GameState::Paused)
+			frame << "\nPaused - Press P to resume, Q/Esc to quit\n";
+		else if (state == GameState::GameOver)
+			frame << "\nGame Over - Press R to restart, Q/Esc to quit\n";
+	}
 }
 
 Game::Game() : m_randomEngine(std::random_device{}())
@@ -297,32 +337,8 @@ void Game::Render()
 
 	for (int y = 0; y < Board::Height; ++y)
 	{
-		for (int x = 0; x < Board::Width; ++x)
-		{
-			Point currentPoint{ x, y };
-			frame << GetBoardCellDisplay(m_board, currentBlocks, ghostBlocks, currentPoint);
-		}
-
-		if (y == 0)
-		{
-			frame << "   Next Piece";
-		}
-		else if (y >= 1 && y <= 4)
-		{
-			RenderPiecePreviewRow(frame, nextBlocks, y - 1);
-		}
-		else if (y == 6)
-		{
-			frame << "   Hold Piece";
-		}
-		else if (y >= 7 && y <= 10)
-		{
-			if (m_hasHoldPiece)
-				RenderPiecePreviewRow(frame, holdBlocks, y - 7);
-			else
-				frame << "   ....";
-		}
-
+		RenderBoardRow(frame, m_board, currentBlocks, ghostBlocks, y);
+		RenderSidePanelRow(frame, nextBlocks, holdBlocks, m_hasHoldPiece, y);
 		frame << '\n';
 	}
 
@@ -331,10 +347,7 @@ void Game::Render()
 	frame << "Debug: B = Fill Bottom Line\n";
 #endif
 
-	if (m_state == GameState::Paused)
-		frame << "\nPaused - Press P to resume, Q/Esc to quit\n";
-	else if (m_state == GameState::GameOver)
-		frame << "\nGame Over - Press R to restart, Q/Esc to quit\n";
+	RenderStatusMessage(frame, m_state);
 
 	std::cout << frame.str() << std::flush;
 }
