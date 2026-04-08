@@ -38,10 +38,11 @@ private:
 	void Update();
 	void Render();
 
-	// 게임오버 후 점수를 기록하고, 실행 간 유지되도록 scores.txt에 저장한다.
 	void PromptAndSaveHighScore();
 	void AddHighScore(const std::string& name, int score);
 	void RenderHighScores(std::ostringstream& frame) const;
+
+	// 게임오버 후 점수를 기록하고, 실행 간 유지되도록 scores.txt에 저장한다.
 	void SaveHighScores() const;
 	void LoadHighScores();
 
@@ -75,9 +76,9 @@ private:
 	static constexpr int MinFallIntervalMs = 100;
 	static constexpr int LockDelayMs = 500;
 	static constexpr int MaxLockResetCount = 15;
+	// 점수 규칙은 Game에 모아 두어 라인 정산 흐름에서 한눈에 확인한다.
 	static constexpr int SoftDropScorePerCell = 1;
 	static constexpr int ComboScorePerStep = 50;
-	// 점수 규칙은 Game에 모아 두어 라인 정산 흐름에서 한눈에 확인한다.
 	static constexpr int TSpinNoLineScore = 400;
 	static constexpr int TSpinSingleScore = 800;
 	static constexpr int TSpinDoubleScore = 1200;
