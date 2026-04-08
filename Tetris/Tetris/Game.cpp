@@ -276,6 +276,17 @@ void Game::Render()
 		{
 			RenderPiecePreviewRow(frame, nextBlocks, y - 1);
 		}
+		else if (y == 6)
+		{
+			frame << "   Hold Piece";
+		}
+		else if (y >= 7 && y <= 10)
+		{
+			if (m_hasHoldPiece)
+				RenderPiecePreviewRow(frame, holdBlocks, y - 7);
+			else
+				frame << "   ....";
+		}
 
 		frame << '\n';
 	}
@@ -477,6 +488,7 @@ void Game::HoldCurrentPiece()
 	if (!m_board.CanPlace(m_currentPiece))
 		m_state = GameState::GameOver;
 }
+
 TetrominoType Game::CreateRandomTetrominoType()
 {
 	if (m_pieceBag.empty())
