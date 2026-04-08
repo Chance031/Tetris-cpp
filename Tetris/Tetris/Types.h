@@ -15,6 +15,7 @@ enum class GameState
 {
     Title,
     Playing,
+    Paused,
     GameOver,
     Exit
 };

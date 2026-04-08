@@ -95,7 +95,9 @@ void Game::Run()
 
 		Render();
 
-		if (m_state == GameState::GameOver)
+		if (m_state == GameState::Paused)
+			HandlePausedInput();
+		else if (m_state == GameState::GameOver)
 			HandleGameOverInput();
 		else if (m_state != GameState::Exit)
 			m_state = GameState::Exit;
@@ -134,6 +136,12 @@ void Game::HandleInput()
 	if (key == KeyEscape || key == 'q' || key == 'Q')
 	{
 		m_state = GameState::Exit;
+		return;
+	}
+
+	if (key == 'p' || key == 'P')
+	{
+		m_state = GameState::Paused;
 		return;
 	}
 
@@ -194,6 +202,26 @@ void Game::HandleTitleInput()
 	}
 }
 
+void Game::HandlePausedInput()
+{
+	while (m_state == GameState::Paused)
+	{
+		const int key = _getch();
+
+		if (key == 'p' || key == 'P')
+		{
+			m_state = GameState::Playing;
+			m_lastFallTime = std::chrono::steady_clock::now();
+
+			if (m_isTouchingGround)
+				m_lockStartTime = std::chrono::steady_clock::now();
+		}
+		else if (key == KeyEscape || key == 'q' || key == 'Q')
+		{
+			m_state = GameState::Exit;
+		}
+	}
+}
 void Game::HandleGameOverInput()
 {
 	while (m_state == GameState::GameOver)
@@ -297,12 +325,14 @@ void Game::Render()
 		frame << '\n';
 	}
 
-	frame << "\nControls: Left/Right = Move, Down = Soft Drop, Z = Rotate, Space = Hard Drop, C = Hold, Q/Esc = Quit\n";
+	frame << "\nControls: Left/Right = Move, Down = Soft Drop, Z = Rotate, Space = Hard Drop, C = Hold, P = Pause, Q/Esc = Quit\n";
 #ifdef _DEBUG
 	frame << "Debug: B = Fill Bottom Line\n";
 #endif
 
-	if (m_state == GameState::GameOver)
+	if (m_state == GameState::Paused)
+		frame << "\nPaused - Press P to resume, Q/Esc to quit\n";
+	else if (m_state == GameState::GameOver)
 		frame << "\nGame Over - Press R to restart, Q/Esc to quit\n";
 
 	std::cout << frame.str() << std::flush;

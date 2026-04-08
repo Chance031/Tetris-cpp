@@ -24,6 +24,7 @@ private:
 
 	void HandleInput();
 	void HandleTitleInput();
+	void HandlePausedInput();
 	void HandleGameOverInput();
 	void Update();
 	void Render();
