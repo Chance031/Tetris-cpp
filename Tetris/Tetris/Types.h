@@ -33,4 +33,9 @@ enum class TetrominoType
     Z
 };
 
-
+// 블록 회전 방향을 표현한다.
+enum class RotationDirection
+{
+    Clockwise,
+    CounterClockwise
+};

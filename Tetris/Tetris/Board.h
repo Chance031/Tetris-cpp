@@ -2,6 +2,8 @@
 
 #include "Tetromino.h"
 
+#include <cstdint>
+
 // 테트리스 보드의 고정된 블록 상태를 관리한다.
 //
 // Board는 현재 조작 중인 블록을 직접 움직이지 않는다.
@@ -29,5 +31,5 @@ public:
 private:
 	// 0은 빈 칸, 1은 고정된 블록이 있는 칸을 뜻한다.
 	// 인덱스 순서는 m_cells[y][x]다.
-	int m_cells[Height][Width] = {};
+	uint8_t m_cells[Height][Width] = {};
 };

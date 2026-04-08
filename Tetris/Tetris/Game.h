@@ -10,11 +10,6 @@
 #include <string>
 #include <vector>
 
-enum class RotationDirection
-{
-	Clockwise,
-	CounterClockwise
-};
 
 struct HighScoreEntry
 {

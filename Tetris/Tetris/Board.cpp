@@ -37,8 +37,9 @@ void Board::LockPiece(const Tetromino& tetromino)
 int Board::ClearLines()
 {
 	int clearedLines = 0;
+	int y = Height - 1;
 
-	for (int y = Height - 1; y >= 0; --y)
+	while (y >= 0)
 	{
 		bool isFullLine = true;
 
@@ -52,11 +53,13 @@ int Board::ClearLines()
 		}
 
 		if (!isFullLine)
+		{
+			--y;
 			continue;
+		}
 
 		++clearedLines;
 
-		// 삭제된 줄 위의 모든 줄을 한 칸씩 아래로 내린다.
 		for (int row = y; row > 0; --row)
 		{
 			for (int x = 0; x < Width; ++x)
@@ -66,12 +69,11 @@ int Board::ClearLines()
 		for (int x = 0; x < Width; ++x)
 			m_cells[0][x] = 0;
 
-		++y;	// 위 줄이 내려왔으므로 같은 y 위치를 다시 검사한다.
+		// y는 감소하지 않는다. 위 줄이 내려왔으므로 같은 y를 다시 검사한다.
 	}
 
 	return clearedLines;
 }
-
 
 bool Board::IsInside(Point point) const
 {

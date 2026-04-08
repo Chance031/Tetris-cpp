@@ -6,6 +6,8 @@
 #include <iostream>
 #include <sstream>
 #include <thread>
+
+// Windows 전용: _kbhit(), _getch() 사용. 크로스플랫폼 빌드 시 대체 필요.
 #include <conio.h>
 
 namespace
