@@ -105,7 +105,7 @@ void Game::StartNewSession()
 	m_isLockRequired = false;
 	m_state = GameState::Playing;
 
-	m_fallInterval = std::chrono::milliseconds(800);
+	m_fallInterval = std::chrono::milliseconds(InitialFallIntervalMs);
 	m_lastFallTime = std::chrono::steady_clock::now();
 
 	m_nextPiece = Tetromino(CreateRandomTetrominoType());
