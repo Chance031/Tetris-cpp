@@ -39,6 +39,7 @@ private:
 
 	bool TryMoveCurrentPiece(int dx, int dy, bool lockOnFail);
 	bool TryRotateCurrentPieceCW();
+	bool TryRotateCurrentPieceCCW();
 	void StartLockDelay();
 	void ResetLockDelay();
 	void RefreshLockDelayAfterSuccessfulMove();

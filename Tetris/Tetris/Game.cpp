@@ -216,6 +216,10 @@ void Game::HandleInput()
 	{
 		TryRotateCurrentPieceCW();
 	}
+	else if (key == 'x' || key == 'X')
+	{
+		TryRotateCurrentPieceCCW();
+	}
 	else if (key == ' ')
 	{
 		HardDropCurrentPiece();
@@ -355,7 +359,7 @@ void Game::Render()
 		frame << '\n';
 	}
 
-	frame << "\nControls: Left/Right = Move, Down = Soft Drop, Z = Rotate, Space = Hard Drop, C = Hold, P = Pause, Q/Esc = Quit\n";
+	frame << "\nControls: Left/Right = Move, Down = Soft Drop, Z/X = Rotate, Space = Hard Drop, C = Hold, P = Pause, Q/Esc = Quit\n";
 #ifdef _DEBUG
 	frame << "Debug: B = T-Spin Setup\n";
 #endif
@@ -500,27 +504,47 @@ bool Game::TryMoveCurrentPiece(int dx, int dy, bool lockOnFail)
 
 bool Game::TryRotateCurrentPieceCW()
 {
-	m_currentPiece.RotateCW();
+	const int oldRotationIndex = m_currentPiece.GetRotation() / 90;
+	std::array<Point, 5> kicks{};
 
-	if (m_board.CanPlace(m_currentPiece))
+	if (m_currentPiece.GetType() == TetrominoType::I)
 	{
-		RefreshLockDelayAfterSuccessfulMove();
-		m_lastMoveWasRotation = true;
-		return true;
+		switch (oldRotationIndex)
+		{
+		case 0:
+			kicks = { Point{ 0, 0 }, Point{ -2, 0 }, Point{ 1, 0 }, Point{ -2, 1 }, Point{ 1, -2 } };
+			break;
+		case 1:
+			kicks = { Point{ 0, 0 }, Point{ -1, 0 }, Point{ 2, 0 }, Point{ -1, -2 }, Point{ 2, 1 } };
+			break;
+		case 2:
+			kicks = { Point{ 0, 0 }, Point{ 2, 0 }, Point{ -1, 0 }, Point{ 2, -1 }, Point{ -1, 2 } };
+			break;
+		case 3:
+			kicks = { Point{ 0, 0 }, Point{ 1, 0 }, Point{ -2, 0 }, Point{ 1, 2 }, Point{ -2, -1 } };
+			break;
+		}
+	}
+	else
+	{
+		switch (oldRotationIndex)
+		{
+		case 0:
+			kicks = { Point{ 0, 0 }, Point{ -1, 0 }, Point{ -1, -1 }, Point{ 0, 2 }, Point{ -1, 2 } };
+			break;
+		case 1:
+			kicks = { Point{ 0, 0 }, Point{ 1, 0 }, Point{ 1, 1 }, Point{ 0, -2 }, Point{ 1, -2 } };
+			break;
+		case 2:
+			kicks = { Point{ 0, 0 }, Point{ 1, 0 }, Point{ 1, -1 }, Point{ 0, 2 }, Point{ 1, 2 } };
+			break;
+		case 3:
+			kicks = { Point{ 0, 0 }, Point{ -1, 0 }, Point{ -1, 1 }, Point{ 0, -2 }, Point{ -1, -2 } };
+			break;
+		}
 	}
 
-	const std::array<Point, 10> kicks{
-		Point{ 1, 0 },
-		Point{ -1, 0 },
-		Point{ 2, 0 },
-		Point{ -2, 0 },
-		Point{ 0, -1 },
-		Point{ 1, -1 },
-		Point{ -1, -1 },
-		Point{ 0, 1 },
-		Point{ 1, 1 },
-		Point{ -1, 1 }
-	};
+	m_currentPiece.RotateCW();
 
 	for (const Point& kick : kicks)
 	{
@@ -540,6 +564,67 @@ bool Game::TryRotateCurrentPieceCW()
 	return false;
 }
 
+bool Game::TryRotateCurrentPieceCCW()
+{
+	const int oldRotationIndex = m_currentPiece.GetRotation() / 90;
+	std::array<Point, 5> kicks{};
+
+	if (m_currentPiece.GetType() == TetrominoType::I)
+	{
+		switch (oldRotationIndex)
+		{
+		case 0:
+			kicks = { Point{ 0, 0 }, Point{ -1, 0 }, Point{ 2, 0 }, Point{ -1, -2 }, Point{ 2, 1 } };
+			break;
+		case 1:
+			kicks = { Point{ 0, 0 }, Point{ -2, 0 }, Point{ 1, 0 }, Point{ -2, 1 }, Point{ 1, -2 } };
+			break;
+		case 2:
+			kicks = { Point{ 0, 0 }, Point{ 1, 0 }, Point{ -2, 0 }, Point{ 1, 2 }, Point{ -2, -1 } };
+			break;
+		case 3:
+			kicks = { Point{ 0, 0 }, Point{ 2, 0 }, Point{ -1, 0 }, Point{ 2, -1 }, Point{ -1, 2 } };
+			break;
+		}
+	}
+	else
+	{
+		switch (oldRotationIndex)
+		{
+		case 0:
+			kicks = { Point{ 0, 0 }, Point{ 1, 0 }, Point{ 1, -1 }, Point{ 0, 2 }, Point{ 1, 2 } };
+			break;
+		case 1:
+			kicks = { Point{ 0, 0 }, Point{ -1, 0 }, Point{ -1, 1 }, Point{ 0, -2 }, Point{ -1, -2 } };
+			break;
+		case 2:
+			kicks = { Point{ 0, 0 }, Point{ -1, 0 }, Point{ -1, -1 }, Point{ 0, 2 }, Point{ -1, 2 } };
+			break;
+		case 3:
+			kicks = { Point{ 0, 0 }, Point{ 1, 0 }, Point{ 1, 1 }, Point{ 0, -2 }, Point{ 1, -2 } };
+			break;
+		}
+	}
+
+	m_currentPiece.RotateCCW();
+
+	for (const Point& kick : kicks)
+	{
+		m_currentPiece.Move(kick.x, kick.y);
+
+		if (m_board.CanPlace(m_currentPiece))
+		{
+			RefreshLockDelayAfterSuccessfulMove();
+			m_lastMoveWasRotation = true;
+			return true;
+		}
+
+		m_currentPiece.Move(-kick.x, -kick.y);
+	}
+
+	m_currentPiece.RotateCW();
+	return false;
+}
 void Game::StartLockDelay()
 {
 	if (m_isTouchingGround)
