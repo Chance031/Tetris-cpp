@@ -54,6 +54,8 @@ gantt
         매직 넘버 상수화 :active, t23180, 2026-04-08, 1d
     section Title
         Init Title :done, t45140, 2026-04-08, 1d
+    section GameOver
+        게임오버 후 재시작 시 화면 잔여 메시지 제거 :crit, t96693, 2026-04-08, 1d
 ```
 <!-- GANTT_END -->
 
@@ -100,4 +102,5 @@ gantt
 | 2026-04-08 | FallInterval | 낙하 속도 매직 넘버 상수화 |
 | 2026-04-08 | MagicNumber | 매직 넘버 상수화 |
 | 2026-04-08 | Title | Init Title |
+| 2026-04-08 | GameOver | 게임오버 후 재시작 시 화면 잔여 메시지 제거 |
 <!-- LOG_END -->
