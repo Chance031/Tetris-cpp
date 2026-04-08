@@ -26,26 +26,26 @@ C++로 만드는 콘솔 테트리스 프로젝트
 <!-- GANTT_START -->
 ```mermaid
 gantt
-    title 테트리스 개발 일정
-    dateFormat YYYY-MM-DD
-    section 시작
-        프로젝트 초기화 :done, init, 2026-04-07, 1d
-    section tetromino
-        테트로미노 .h / .cpp 생성 :done, t16803, 2026-04-07, 1d
-    section Init Board
-        보드 생성 :done, t84048, 2026-04-07, 1d
-    section 리팩토링
-        코드 리뷰 반영 및 리팩토링 :done, refactor, 2026-04-07, 1d
-    section 테스트
-        단위 테스트 (Board + Tetromino) :done, test, 2026-04-07, 1d
-    section Init Game
-        게임 .h / .cpp 생성 :done, t91896, 2026-04-08, 1d
-    section Render / Update
-        렌더링 및 업데이트 구현 :done, t47867, 2026-04-08, 1d
-    section Input
-        키보드 입력 구현 및 수정 :done, t8258, 2026-04-08, 1d
-    section Levelup
-        Lvelup, fallingSpeed, ScoreUpdate, Init NextPiece :done, t44367, 2026-04-08, 1d
+ title 테트리스 개발 일정
+ dateFormat YYYY-MM-DD
+ section 시작
+ 프로젝트 초기화 :done, init, 2026-04-07, 1d
+ section Tetromino
+ Tetromino .h / .cpp 구현 :done, t16803, 2026-04-07, 1d
+ section Board
+ Board .h / .cpp 구현 :done, t84048, 2026-04-07, 1d
+ section 리팩토링
+ 코드 리뷰 반영 및 리팩토링 :done, refactor, 2026-04-07, 1d
+ section Game
+ Game .h / .cpp 구현 :done, t91896, 2026-04-08, 1d
+ section Render / Update
+ 렌더링 및 업데이트 구현 :done, t47867, 2026-04-08, 1d
+ section Input
+ 키보드 입력 구현 및 수정 :done, t8258, 2026-04-08, 1d
+ section Level / Score
+ 레벨업, 낙하속도, 점수, 다음블록 초기화 :done, t44367, 2026-04-08, 1d
+ section UI / GameOver
+ 미리보기 위치 변경, 게임오버 후 재시작 기능 :active, t55123, 2026-04-08, 1d
 ```
 <!-- GANTT_END -->
 
@@ -54,13 +54,13 @@ gantt
 ## ✅ 구현 현황
 
 <!-- CHECKLIST_START -->
-- [x] 충돌 처리 (단위 테스트 확인)
-- [x] 라인 클리어 (단위 테스트 확인)
+- [x] 충돌 처리
+- [x] 라인 클리어
 - [x] 블록 생성 및 렌더링
 - [x] 블록 이동 / 회전
+- [x] 점수 시스템
+- [x] 게임 오버 / 재시작
 - [ ] 맵 렌더링
-- [ ] 점수 시스템
-- [ ] 게임 오버 / 재시작
 <!-- CHECKLIST_END -->
 
 ---
@@ -68,7 +68,7 @@ gantt
 ## 📝 작업 로그
 
 <!-- LOG_START -->
-| 날짜 | 섹션 | 작업 내용 |
+| 날짜 | 타입 | 작업 내용 |
 |------|------|-----------|
 | 2026-04-07 | feat | 프로젝트 초기화 |
 | 2026-04-07 | feat | Tetromino .h / .cpp 구현 |
@@ -81,5 +81,7 @@ gantt
 | 2026-04-08 | feat | Game::Update() / Render() 기본 구현 |
 | 2026-04-08 | feat | 키보드 입력 처리 구현 |
 | 2026-04-08 | fix | 키 입력 처리 수정 |
-| 2026-04-08 | Levelup | Lvelup, fallingSpeed, ScoreUpdate, Init NextPiece |
+| 2026-04-08 | feat | 레벨업, 낙하 속도, 점수 업데이트, 다음 블록 초기화 구현 |
+| 2026-04-08 | feat | 미리보기 블록 위치 우측 상단으로 이동 |
+| 2026-04-08 | feat | 게임오버 후 종료 / 재시작 선택 기능 추가 |
 <!-- LOG_END -->
