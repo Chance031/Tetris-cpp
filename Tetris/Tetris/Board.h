@@ -25,10 +25,6 @@ public:
 	bool IsCellEmpty(Point point) const;
 	bool IsCellFilled(Point point) const;
 
-#ifdef _DEBUG
-	void FillDebugLine(int y, int emptyX);
-	void SetDebugCell(Point point, bool isFilled);
-#endif
 
 private:
 	// 0은 빈 칸, 1은 고정된 블록이 있는 칸을 뜻한다.

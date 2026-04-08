@@ -298,12 +298,6 @@ void Game::HandleInput()
 	{
 		HoldCurrentPiece();
 	}
-#ifdef _DEBUG
-	else if (key == 'b' || key == 'B')
-	{
-		SetupDebugTSpin();
-	}
-#endif
 }
 
 void Game::HandleTitleInput()
@@ -437,9 +431,6 @@ void Game::Render()
 	}
 
 	frame << "\nControls: Left/Right = Move, Down = Soft Drop, Z/X = Rotate, Space = Hard Drop, C = Hold, P = Pause, Q/Esc = Quit\n";
-#ifdef _DEBUG
-	frame << "Debug: B = T-Spin Setup\n";
-#endif
 
 	RenderStatusMessage(frame, m_state);
 
@@ -808,29 +799,6 @@ void Game::HoldCurrentPiece()
 	}
 }
 
-#ifdef _DEBUG
-void Game::SetupDebugTSpin()
-{
-	m_board.Reset();
-
-	m_currentPiece = Tetromino(TetrominoType::T);
-	m_currentPiece.SetPosition(Board::Width / 2 - 1, Board::Height - 3);
-	m_currentPiece.SetRotation(0);
-
-	const Point position = m_currentPiece.GetPosition();
-	const Point center{ position.x + 1, position.y + 1 };
-
-	m_board.SetDebugCell({ center.x - 1, center.y - 1 }, true);
-	m_board.SetDebugCell({ center.x + 1, center.y - 1 }, true);
-	m_board.SetDebugCell({ center.x - 1, center.y + 1 }, true);
-
-	m_isLockRequired = false;
-	m_lastMoveWasRotation = false;
-	ResetLockDelay();
-	m_lastFallTime = std::chrono::steady_clock::now();
-	m_lastClearMessage = "Debug T-Spin setup: press Z, then Space";
-}
-#endif
 TetrominoType Game::CreateRandomTetrominoType()
 {
 	if (m_pieceBag.empty())

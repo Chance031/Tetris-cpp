@@ -72,24 +72,6 @@ int Board::ClearLines()
 	return clearedLines;
 }
 
-#ifdef _DEBUG
-void Board::FillDebugLine(int y, int emptyX)
-{
-	if (y < 0 || y >= Height)
-		return;
-
-	for (int x = 0; x < Width; ++x)
-		m_cells[y][x] = (x == emptyX) ? 0 : 1;
-}
-
-void Board::SetDebugCell(Point point, bool isFilled)
-{
-	if (!IsInside(point))
-		return;
-
-	m_cells[point.y][point.x] = isFilled ? 1 : 0;
-}
-#endif
 
 bool Board::IsInside(Point point) const
 {

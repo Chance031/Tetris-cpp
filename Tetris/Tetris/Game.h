@@ -62,9 +62,6 @@ private:
 	bool DetectTSpin() const;
 	void HardDropCurrentPiece();
 	void HoldCurrentPiece();
-#ifdef _DEBUG
-	void SetupDebugTSpin();
-#endif
 	TetrominoType CreateRandomTetrominoType();
 	void RefillPieceBag();
 
