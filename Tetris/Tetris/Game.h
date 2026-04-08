@@ -22,6 +22,7 @@ private:
 	void StartNewSession();
 
 	void HandleInput();
+	void HandleTitleInput();
 	void HandleGameOverInput();
 	void Update();
 	void Render();
@@ -46,7 +47,7 @@ private:
 	Tetromino m_currentPiece;
 	Tetromino m_nextPiece;
 
-	GameState m_state = GameState::Playing;
+	GameState m_state = GameState::Title;
 	bool m_isLockRequired = false; // true이면 다음 Update()에서 현재 블록을 보드에 고정한다.
 
 	int m_score = 0;

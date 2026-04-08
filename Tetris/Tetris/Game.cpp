@@ -11,6 +11,7 @@
 namespace
 {
 	constexpr int KeyEscape = 27;
+	constexpr int KeyEnter = 13;
 	constexpr int KeyExtendedPrefix = 224;
 	constexpr int KeyExtendedPrefixAlt = 0;
 	constexpr int KeyArrowLeft = 75;
@@ -58,7 +59,7 @@ Game::Game() : m_randomEngine(std::random_device{}())
 
 void Game::Initialize()
 {
-	StartNewSession();
+	m_state = GameState::Title;
 }
 
 void Game::Run()
@@ -69,6 +70,13 @@ void Game::Run()
 
 	while (m_state != GameState::Exit)
 	{
+		if (m_state == GameState::Title)
+		{
+			Render();
+			HandleTitleInput();
+			continue;
+		}
+
 		while (m_state == GameState::Playing)
 		{
 			HandleInput();
@@ -90,6 +98,7 @@ void Game::Run()
 			m_state = GameState::Exit;
 	}
 
+	Render();
 	std::cout << "\x1B[?25h" << std::flush;
 }
 
@@ -152,6 +161,23 @@ void Game::HandleInput()
 	}
 }
 
+void Game::HandleTitleInput()
+{
+	while (m_state == GameState::Title)
+	{
+		const int key = _getch();
+
+		if (key == KeyEnter || key == ' ')
+		{
+			StartNewSession();
+		}
+		else if (key == KeyEscape || key == 'q' || key == 'Q')
+		{
+			m_state = GameState::Exit;
+		}
+	}
+}
+
 void Game::HandleGameOverInput()
 {
 	while (m_state == GameState::GameOver)
@@ -193,6 +219,23 @@ void Game::Update()
 
 void Game::Render()
 {
+	if (m_state == GameState::Title)
+	{
+		std::ostringstream titleFrame;
+		titleFrame << "\x1B[2J\x1B[H";
+		titleFrame << "TETRIS\n\n";
+		titleFrame << "Press Enter or Space to Start\n";
+		titleFrame << "Press Q or Esc to Quit\n";
+		std::cout << titleFrame.str() << std::flush;
+		return;
+	}
+
+	if (m_state == GameState::Exit)
+	{
+		std::cout << "\x1B[2J\x1B[HQuit\n" << std::flush;
+		return;
+	}
+
 	const auto currentBlocks = m_currentPiece.GetBlockLocations();
 	const auto nextBlocks = m_nextPiece.GetBlockLocations();
 	std::ostringstream frame;
@@ -226,8 +269,6 @@ void Game::Render()
 
 	if (m_state == GameState::GameOver)
 		frame << "\nGame Over - Press R to restart, Q/Esc to quit\n";
-	else if (m_state == GameState::Exit)
-		frame << "\nQuit\n";
 
 	std::cout << frame.str() << std::flush;
 }
