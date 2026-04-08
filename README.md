@@ -72,6 +72,8 @@ gantt
         콤보 및 B2B 기능 추가 :done, t36199, 2026-04-08, 1d
     section T-Spin
         T-스핀 :done, t94811, 2026-04-08, 1d
+    section Wall kick
+        벽킥 :crit, t77172, 2026-04-09, 1d
 ```
 <!-- GANTT_END -->
 
@@ -127,4 +129,5 @@ gantt
 | 2026-04-08 | UI | UI 개선 |
 | 2026-04-08 | Combo | 콤보 및 B2B 기능 추가 |
 | 2026-04-08 | T-Spin | T-스핀 |
+| 2026-04-09 | Wall kick | 벽킥 |
 <!-- LOG_END -->
