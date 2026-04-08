@@ -94,6 +94,55 @@ namespace
 		else if (state == GameState::GameOver)
 			frame << "\nGame Over - Press R to restart, Q/Esc to quit\n";
 	}
+	std::array<Point, 5> GetSrsKicks(TetrominoType type, int oldRotationIndex, RotationDirection direction)
+	{
+		const bool isClockwise = direction == RotationDirection::Clockwise;
+
+		if (type == TetrominoType::I)
+		{
+			switch (oldRotationIndex)
+			{
+			case 0:
+				return isClockwise
+					? std::array<Point, 5>{ Point{ 0, 0 }, Point{ -2, 0 }, Point{ 1, 0 }, Point{ -2, 1 }, Point{ 1, -2 } }
+					: std::array<Point, 5>{ Point{ 0, 0 }, Point{ -1, 0 }, Point{ 2, 0 }, Point{ -1, -2 }, Point{ 2, 1 } };
+			case 1:
+				return isClockwise
+					? std::array<Point, 5>{ Point{ 0, 0 }, Point{ -1, 0 }, Point{ 2, 0 }, Point{ -1, -2 }, Point{ 2, 1 } }
+					: std::array<Point, 5>{ Point{ 0, 0 }, Point{ -2, 0 }, Point{ 1, 0 }, Point{ -2, 1 }, Point{ 1, -2 } };
+			case 2:
+				return isClockwise
+					? std::array<Point, 5>{ Point{ 0, 0 }, Point{ 2, 0 }, Point{ -1, 0 }, Point{ 2, -1 }, Point{ -1, 2 } }
+					: std::array<Point, 5>{ Point{ 0, 0 }, Point{ 1, 0 }, Point{ -2, 0 }, Point{ 1, 2 }, Point{ -2, -1 } };
+			case 3:
+				return isClockwise
+					? std::array<Point, 5>{ Point{ 0, 0 }, Point{ 1, 0 }, Point{ -2, 0 }, Point{ 1, 2 }, Point{ -2, -1 } }
+					: std::array<Point, 5>{ Point{ 0, 0 }, Point{ 2, 0 }, Point{ -1, 0 }, Point{ 2, -1 }, Point{ -1, 2 } };
+			}
+		}
+
+		switch (oldRotationIndex)
+		{
+		case 0:
+			return isClockwise
+				? std::array<Point, 5>{ Point{ 0, 0 }, Point{ -1, 0 }, Point{ -1, -1 }, Point{ 0, 2 }, Point{ -1, 2 } }
+				: std::array<Point, 5>{ Point{ 0, 0 }, Point{ 1, 0 }, Point{ 1, -1 }, Point{ 0, 2 }, Point{ 1, 2 } };
+		case 1:
+			return isClockwise
+				? std::array<Point, 5>{ Point{ 0, 0 }, Point{ 1, 0 }, Point{ 1, 1 }, Point{ 0, -2 }, Point{ 1, -2 } }
+				: std::array<Point, 5>{ Point{ 0, 0 }, Point{ -1, 0 }, Point{ -1, 1 }, Point{ 0, -2 }, Point{ -1, -2 } };
+		case 2:
+			return isClockwise
+				? std::array<Point, 5>{ Point{ 0, 0 }, Point{ 1, 0 }, Point{ 1, -1 }, Point{ 0, 2 }, Point{ 1, 2 } }
+				: std::array<Point, 5>{ Point{ 0, 0 }, Point{ -1, 0 }, Point{ -1, -1 }, Point{ 0, 2 }, Point{ -1, 2 } };
+		case 3:
+			return isClockwise
+				? std::array<Point, 5>{ Point{ 0, 0 }, Point{ -1, 0 }, Point{ -1, 1 }, Point{ 0, -2 }, Point{ -1, -2 } }
+				: std::array<Point, 5>{ Point{ 0, 0 }, Point{ 1, 0 }, Point{ 1, 1 }, Point{ 0, -2 }, Point{ 1, -2 } };
+		default:
+			return {};
+		}
+	}
 }
 
 Game::Game() : m_randomEngine(std::random_device{}())
@@ -214,11 +263,11 @@ void Game::HandleInput()
 
 	if (key == 'z' || key == 'Z')
 	{
-		TryRotateCurrentPieceCW();
+		TryRotateCurrentPiece(RotationDirection::Clockwise);
 	}
 	else if (key == 'x' || key == 'X')
 	{
-		TryRotateCurrentPieceCCW();
+		TryRotateCurrentPiece(RotationDirection::CounterClockwise);
 	}
 	else if (key == ' ')
 	{
@@ -502,49 +551,15 @@ bool Game::TryMoveCurrentPiece(int dx, int dy, bool lockOnFail)
 	return false;
 }
 
-bool Game::TryRotateCurrentPieceCW()
+bool Game::TryRotateCurrentPiece(RotationDirection direction)
 {
 	const int oldRotationIndex = m_currentPiece.GetRotation() / 90;
-	std::array<Point, 5> kicks{};
+	const auto kicks = GetSrsKicks(m_currentPiece.GetType(), oldRotationIndex, direction);
 
-	if (m_currentPiece.GetType() == TetrominoType::I)
-	{
-		switch (oldRotationIndex)
-		{
-		case 0:
-			kicks = { Point{ 0, 0 }, Point{ -2, 0 }, Point{ 1, 0 }, Point{ -2, 1 }, Point{ 1, -2 } };
-			break;
-		case 1:
-			kicks = { Point{ 0, 0 }, Point{ -1, 0 }, Point{ 2, 0 }, Point{ -1, -2 }, Point{ 2, 1 } };
-			break;
-		case 2:
-			kicks = { Point{ 0, 0 }, Point{ 2, 0 }, Point{ -1, 0 }, Point{ 2, -1 }, Point{ -1, 2 } };
-			break;
-		case 3:
-			kicks = { Point{ 0, 0 }, Point{ 1, 0 }, Point{ -2, 0 }, Point{ 1, 2 }, Point{ -2, -1 } };
-			break;
-		}
-	}
+	if (direction == RotationDirection::Clockwise)
+		m_currentPiece.RotateCW();
 	else
-	{
-		switch (oldRotationIndex)
-		{
-		case 0:
-			kicks = { Point{ 0, 0 }, Point{ -1, 0 }, Point{ -1, -1 }, Point{ 0, 2 }, Point{ -1, 2 } };
-			break;
-		case 1:
-			kicks = { Point{ 0, 0 }, Point{ 1, 0 }, Point{ 1, 1 }, Point{ 0, -2 }, Point{ 1, -2 } };
-			break;
-		case 2:
-			kicks = { Point{ 0, 0 }, Point{ 1, 0 }, Point{ 1, -1 }, Point{ 0, 2 }, Point{ 1, 2 } };
-			break;
-		case 3:
-			kicks = { Point{ 0, 0 }, Point{ -1, 0 }, Point{ -1, 1 }, Point{ 0, -2 }, Point{ -1, -2 } };
-			break;
-		}
-	}
-
-	m_currentPiece.RotateCW();
+		m_currentPiece.RotateCCW();
 
 	for (const Point& kick : kicks)
 	{
@@ -560,69 +575,11 @@ bool Game::TryRotateCurrentPieceCW()
 		m_currentPiece.Move(-kick.x, -kick.y);
 	}
 
-	m_currentPiece.RotateCCW();
-	return false;
-}
-
-bool Game::TryRotateCurrentPieceCCW()
-{
-	const int oldRotationIndex = m_currentPiece.GetRotation() / 90;
-	std::array<Point, 5> kicks{};
-
-	if (m_currentPiece.GetType() == TetrominoType::I)
-	{
-		switch (oldRotationIndex)
-		{
-		case 0:
-			kicks = { Point{ 0, 0 }, Point{ -1, 0 }, Point{ 2, 0 }, Point{ -1, -2 }, Point{ 2, 1 } };
-			break;
-		case 1:
-			kicks = { Point{ 0, 0 }, Point{ -2, 0 }, Point{ 1, 0 }, Point{ -2, 1 }, Point{ 1, -2 } };
-			break;
-		case 2:
-			kicks = { Point{ 0, 0 }, Point{ 1, 0 }, Point{ -2, 0 }, Point{ 1, 2 }, Point{ -2, -1 } };
-			break;
-		case 3:
-			kicks = { Point{ 0, 0 }, Point{ 2, 0 }, Point{ -1, 0 }, Point{ 2, -1 }, Point{ -1, 2 } };
-			break;
-		}
-	}
+	if (direction == RotationDirection::Clockwise)
+		m_currentPiece.RotateCCW();
 	else
-	{
-		switch (oldRotationIndex)
-		{
-		case 0:
-			kicks = { Point{ 0, 0 }, Point{ 1, 0 }, Point{ 1, -1 }, Point{ 0, 2 }, Point{ 1, 2 } };
-			break;
-		case 1:
-			kicks = { Point{ 0, 0 }, Point{ -1, 0 }, Point{ -1, 1 }, Point{ 0, -2 }, Point{ -1, -2 } };
-			break;
-		case 2:
-			kicks = { Point{ 0, 0 }, Point{ -1, 0 }, Point{ -1, -1 }, Point{ 0, 2 }, Point{ -1, 2 } };
-			break;
-		case 3:
-			kicks = { Point{ 0, 0 }, Point{ 1, 0 }, Point{ 1, 1 }, Point{ 0, -2 }, Point{ 1, -2 } };
-			break;
-		}
-	}
+		m_currentPiece.RotateCW();
 
-	m_currentPiece.RotateCCW();
-
-	for (const Point& kick : kicks)
-	{
-		m_currentPiece.Move(kick.x, kick.y);
-
-		if (m_board.CanPlace(m_currentPiece))
-		{
-			RefreshLockDelayAfterSuccessfulMove();
-			m_lastMoveWasRotation = true;
-			return true;
-		}
-
-		m_currentPiece.Move(-kick.x, -kick.y);
-	}
-
-	m_currentPiece.RotateCW();
 	return false;
 }
 void Game::StartLockDelay()

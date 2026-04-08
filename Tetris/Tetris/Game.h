@@ -9,6 +9,12 @@
 #include <string>
 #include <vector>
 
+enum class RotationDirection
+{
+	Clockwise,
+	CounterClockwise
+};
+
 // Game 루프 전체를 조율하는 최상위 클래스다.
 // 입력 처리, 상태 업데이트, 렌더링 순서를 관리하고
 // Board와 Tetromino의 상호작용을 중재한다.
@@ -38,8 +44,7 @@ private:
 	void ProcessLockAndResolve();
 
 	bool TryMoveCurrentPiece(int dx, int dy, bool lockOnFail);
-	bool TryRotateCurrentPieceCW();
-	bool TryRotateCurrentPieceCCW();
+	bool TryRotateCurrentPiece(RotationDirection direction);
 	void StartLockDelay();
 	void ResetLockDelay();
 	void RefreshLockDelayAfterSuccessfulMove();
