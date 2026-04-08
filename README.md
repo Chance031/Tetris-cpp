@@ -66,6 +66,8 @@ gantt
         Init Pause :done, t97166, 2026-04-08, 1d
     section soft drop
         소프트 드롭 점수 :done, t4875, 2026-04-08, 1d
+    section UI
+        UI 개선 :crit, t85460, 2026-04-08, 1d
 ```
 <!-- GANTT_END -->
 
@@ -118,4 +120,5 @@ gantt
 | 2026-04-08 | Hold | Init Hold |
 | 2026-04-08 | Pause | Init Pause |
 | 2026-04-08 | soft drop | 소프트 드롭 점수 |
+| 2026-04-08 | UI | UI 개선 |
 <!-- LOG_END -->
