@@ -17,6 +17,10 @@ namespace
 	constexpr int KeyArrowDown = 80;
 	constexpr int NextPiecePreviewSize = 4;
 
+	constexpr int InitialFallIntervalMs = 800;
+	constexpr int FallIntervalDecreasePerLevel = 50;
+	constexpr int MinFallIntervalMs = 100;
+
 	bool ContainsPoint(const std::array<Point, 4>& blocks, Point point)
 	{
 		for (const Point& block : blocks)
@@ -252,12 +256,9 @@ void Game::UpdateLevel()
 {
 	m_level = (m_totalLines / 10) + 1;
 
-	const int fallInterval = 800 - (m_level - 1) * 50;
+	const int fallInterval = InitialFallIntervalMs - (m_level - 1) * FallIntervalDecreasePerLevel;
 
-	if (fallInterval < 100)
-		m_fallInterval = std::chrono::milliseconds(100);
-	else
-		m_fallInterval = std::chrono::milliseconds(fallInterval);
+	m_fallInterval = std::chrono::milliseconds(std::max(fallInterval, MinFallIntervalMs));
 }
 
 void Game::SpawnNextPiece()
@@ -310,6 +311,16 @@ bool Game::TryRotateCurrentPieceCW()
 
 	if (m_board.CanPlace(m_currentPiece))
 		return true;
+
+	for (int kick : { 1, -1, 2, -2 })
+	{
+		m_currentPiece.Move(kick, 0);
+
+		if (m_board.CanPlace(m_currentPiece)) 
+			return true;
+
+		m_currentPiece.Move(-kick, 0);
+	}
 
 	m_currentPiece.RotateCCW();
 	return false;
