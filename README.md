@@ -74,6 +74,8 @@ gantt
         T-스핀 :done, t94811, 2026-04-08, 1d
     section Wall kick
         벽킥 :crit, t77172, 2026-04-09, 1d
+    section spin refactoring
+        회전 코드 리팩토링 :crit, t55626, 2026-04-09, 1d
 ```
 <!-- GANTT_END -->
 
@@ -130,4 +132,5 @@ gantt
 | 2026-04-08 | Combo | 콤보 및 B2B 기능 추가 |
 | 2026-04-08 | T-Spin | T-스핀 |
 | 2026-04-09 | Wall kick | 벽킥 |
+| 2026-04-09 | spin refactoring | 회전 코드 리팩토링 |
 <!-- LOG_END -->
