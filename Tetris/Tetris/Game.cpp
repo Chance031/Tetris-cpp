@@ -31,6 +31,25 @@ namespace
 		return false;
 	}
 
+
+	void AppendColoredCell(std::ostringstream& frame, char cell)
+	{
+		switch (cell)
+		{
+		case '@':
+			frame << "\x1B[36m@\x1B[0m";
+			break;
+		case '#':
+			frame << "\x1B[37m#\x1B[0m";
+			break;
+		case '+':
+			frame << "\x1B[90m+\x1B[0m";
+			break;
+		default:
+			frame << cell;
+			break;
+		}
+	}
 	char GetBoardCellDisplay(const Board& board, const std::array<Point, 4>& currentBlocks, const std::array<Point, 4>& ghostBlocks, Point point)
 	{
 		if (ContainsPoint(currentBlocks, point))
@@ -52,7 +71,7 @@ namespace
 		for (int previewX = 0; previewX < NextPiecePreviewSize; ++previewX)
 		{
 			Point previewPoint{ previewX, previewY };
-			frame << (ContainsPoint(blocks, previewPoint) ? '@' : '.');
+			AppendColoredCell(frame, ContainsPoint(blocks, previewPoint) ? '@' : '.');
 		}
 	}
 
@@ -61,7 +80,7 @@ namespace
 		for (int x = 0; x < Board::Width; ++x)
 		{
 			Point currentPoint{ x, y };
-			frame << GetBoardCellDisplay(board, currentBlocks, ghostBlocks, currentPoint);
+			AppendColoredCell(frame, GetBoardCellDisplay(board, currentBlocks, ghostBlocks, currentPoint));
 		}
 	}
 
