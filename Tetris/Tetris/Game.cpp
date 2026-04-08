@@ -30,13 +30,16 @@ namespace
 		return false;
 	}
 
-	char GetBoardCellDisplay(const Board& board, const std::array<Point, 4>& currentBlocks, Point point)
+	char GetBoardCellDisplay(const Board& board, const std::array<Point, 4>& currentBlocks, const std::array<Point, 4>& ghostBlocks, Point point)
 	{
 		if (ContainsPoint(currentBlocks, point))
 			return '@';
 
 		if (board.IsCellFilled(point))
 			return '#';
+
+		if (ContainsPoint(ghostBlocks, point))
+			return '+';
 
 		return '.';
 	}
@@ -238,6 +241,7 @@ void Game::Render()
 
 	const auto currentBlocks = m_currentPiece.GetBlockLocations();
 	const auto nextBlocks = m_nextPiece.GetBlockLocations();
+	const auto ghostBlocks = GetGhostPiece().GetBlockLocations();
 	std::ostringstream frame;
 
 	frame << "\x1B[H\x1B[J";
@@ -250,7 +254,7 @@ void Game::Render()
 		for (int x = 0; x < Board::Width; ++x)
 		{
 			Point currentPoint{ x, y };
-			frame << GetBoardCellDisplay(m_board, currentBlocks, currentPoint);
+			frame << GetBoardCellDisplay(m_board, currentBlocks, ghostBlocks, currentPoint);
 		}
 
 		if (y == 0)
@@ -379,5 +383,23 @@ void Game::HardDropCurrentPiece()
 TetrominoType Game::CreateRandomTetrominoType()
 {
 	return static_cast<TetrominoType>(m_pieceDistribution(m_randomEngine));
+}
+
+Tetromino Game::GetGhostPiece() const
+{
+	Tetromino ghostPiece = m_currentPiece;
+
+	while (true)
+	{
+		ghostPiece.Move(0, 1);
+
+		if (!m_board.CanPlace(ghostPiece))
+		{
+			ghostPiece.Move(0, -1);
+			break;
+		}
+	}
+
+	return ghostPiece;
 }
 

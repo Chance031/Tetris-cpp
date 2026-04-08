@@ -38,6 +38,8 @@ private:
 	void HardDropCurrentPiece();
 	TetrominoType CreateRandomTetrominoType();
 
+	Tetromino GetGhostPiece() const;
+
 private:
 	static constexpr int InitialFallIntervalMs = 800;
 	static constexpr int FallIntervalDecreasePerLevel = 50;
