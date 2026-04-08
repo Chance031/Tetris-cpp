@@ -22,6 +22,7 @@ private:
 	void StartNewSession();
 
 	void HandleInput();
+	void HandleGameOverInput();
 	void Update();
 	void Render();
 
