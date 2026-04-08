@@ -64,6 +64,8 @@ gantt
         Init Hold :done, t97044, 2026-04-08, 1d
     section Pause
         Init Pause :done, t97166, 2026-04-08, 1d
+    section soft drop
+        소프트 드롭 점수 :done, t4875, 2026-04-08, 1d
 ```
 <!-- GANTT_END -->
 
@@ -115,4 +117,5 @@ gantt
 | 2026-04-08 | 7-bag | 랜덤 7-bag Init |
 | 2026-04-08 | Hold | Init Hold |
 | 2026-04-08 | Pause | Init Pause |
+| 2026-04-08 | soft drop | 소프트 드롭 점수 |
 <!-- LOG_END -->
