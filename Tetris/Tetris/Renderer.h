@@ -7,6 +7,7 @@
 #include <array>
 #include <sstream>
 
+// 콘솔 출력 전용 헬퍼 모음이다. Game은 화면 구성 순서만 결정하고, 실제 셀 표현은 이쪽에 맡긴다.
 namespace Renderer
 {
 	bool ContainsPoint(const std::array<Point, 4>& blocks, Point point);

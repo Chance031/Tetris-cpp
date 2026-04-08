@@ -202,6 +202,7 @@ void Game::HandlePausedInput()
 		}
 	}
 }
+
 void Game::HandleGameOverInput()
 {
 	if (m_needsHighScoreName)
@@ -401,6 +402,7 @@ void Game::RenderHighScores(std::ostringstream& frame) const
 			<< m_highScores[i].score << '\n';
 	}
 }
+
 int Game::CalculateScore(int clearedLines) const
 {
 	switch (clearedLines)
@@ -568,6 +570,7 @@ bool Game::TryRotateCurrentPiece(RotationDirection direction)
 
 	return false;
 }
+
 void Game::StartLockDelay()
 {
 	if (m_isTouchingGround)

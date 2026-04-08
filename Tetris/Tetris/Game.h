@@ -10,7 +10,7 @@
 #include <string>
 #include <vector>
 
-
+// 한 번의 게임 결과를 하이스코어 표에 저장하기 위한 값 객체다.
 struct HighScoreEntry
 {
 	std::string name;
@@ -37,11 +37,15 @@ private:
 	void HandleGameOverInput();
 	void Update();
 	void Render();
+
+	// 게임오버 후 점수를 기록하고, 실행 간 유지되도록 scores.txt에 저장한다.
 	void PromptAndSaveHighScore();
 	void AddHighScore(const std::string& name, int score);
 	void RenderHighScores(std::ostringstream& frame) const;
 	void SaveHighScores() const;
 	void LoadHighScores();
+
+	// 상태 변경 지점을 한 곳으로 모아 이후 전환 부작용을 붙이기 쉽게 한다.
 	void TransitionTo(GameState newState);
 
 	int CalculateScore(int clearedLines) const;
@@ -73,6 +77,7 @@ private:
 	static constexpr int MaxLockResetCount = 15;
 	static constexpr int SoftDropScorePerCell = 1;
 	static constexpr int ComboScorePerStep = 50;
+	// 점수 규칙은 Game에 모아 두어 라인 정산 흐름에서 한눈에 확인한다.
 	static constexpr int TSpinNoLineScore = 400;
 	static constexpr int TSpinSingleScore = 800;
 	static constexpr int TSpinDoubleScore = 1200;

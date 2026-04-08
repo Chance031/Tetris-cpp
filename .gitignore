@@ -54,3 +54,6 @@ Debug/
 Release/
 x64/
 x86/
+
+# Runtime score data
+scores.txt

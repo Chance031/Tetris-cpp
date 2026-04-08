@@ -198,6 +198,7 @@ namespace
 		}
 	};
 }
+
 std::array<Point, 5> GetSrsKicks(TetrominoType type, int oldRotationIndex, RotationDirection direction)
 {
 	const bool isClockwise = direction == RotationDirection::Clockwise;

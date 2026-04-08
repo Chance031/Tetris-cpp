@@ -35,4 +35,6 @@ private:
 	int m_rotation = 0;
 };
 
+
+// SRS 벽킥 후보를 반환한다. Game은 이 후보들을 순서대로 적용해 회전을 시도한다.
 std::array<Point, 5> GetSrsKicks(TetrominoType type, int oldRotationIndex, RotationDirection direction);
