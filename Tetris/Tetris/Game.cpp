@@ -31,20 +31,29 @@ void Game::Run()
 
 	std::cout << "\x1B[2J\x1B[H\x1B[?25l";
 
-	while (m_state == GameState::Playing)
+	while (m_state != GameState::Exit)
 	{
-		HandleInput();
+		while (m_state == GameState::Playing)
+		{
+			HandleInput();
 
-		if (m_state != GameState::Playing)
-			break;
+			if (m_state != GameState::Playing)
+				break;
 
-		Update();
+			Update();
+			Render();
+
+			std::this_thread::sleep_for(FrameDelay);
+		}
+
 		Render();
 
-		std::this_thread::sleep_for(FrameDelay);
+		if (m_state == GameState::GameOver)
+			HandleGameOverInput();
+		else if (m_state != GameState::Exit)
+			m_state = GameState::Exit;
 	}
 
-	Render();
 	std::cout << "\x1B[?25h" << std::flush;
 }
 
@@ -57,6 +66,7 @@ void Game::StartNewSession()
 	m_isLockRequired = false;
 	m_state = GameState::Playing;
 
+	m_fallInterval = std::chrono::milliseconds(800);
 	m_lastFallTime = std::chrono::steady_clock::now();
 
 	m_nextPiece = Tetromino(CreateRandomTetrominoType());
@@ -103,6 +113,24 @@ void Game::HandleInput()
 	else if (key == ' ')
 	{
 		HardDropCurrentPiece();
+	}
+}
+
+void Game::HandleGameOverInput()
+{
+	while (m_state == GameState::GameOver)
+	{
+		const int key = _getch();
+
+		if (key == 'r' || key == 'R')
+		{
+			StartNewSession();
+			Render();
+		}
+		else if (key == KeyEscape || key == 'q' || key == 'Q')
+		{
+			m_state = GameState::Exit;
+		}
 	}
 }
 
@@ -162,27 +190,30 @@ void Game::Render()
 				frame << '.';
 		}
 
-		frame << '\n';
-	}
-
-	frame << "\nNext Piece\n";
-
-	for (int y = 0; y < 4; ++y)
-	{
-		for (int x = 0; x < 4; ++x)
+		if (y == 0)
 		{
-			bool isNextPieceCell = false;
+			frame << "   Next Piece";
+		}
+		else if (y >= 1 && y <= 4)
+		{
+			frame << "   ";
+			const int previewY = y - 1;
 
-			for (const Point& block : nextBlocks)
+			for (int previewX = 0; previewX < 4; ++previewX)
 			{
-				if (block.x == x && block.y == y)
-				{
-					isNextPieceCell = true;
-					break;
-				}
-			}
+				bool isNextPieceCell = false;
 
-			frame << (isNextPieceCell ? '@' : '.');
+				for (const Point& block : nextBlocks)
+				{
+					if (block.x == previewX && block.y == previewY)
+					{
+						isNextPieceCell = true;
+						break;
+					}
+				}
+
+				frame << (isNextPieceCell ? '@' : '.');
+			}
 		}
 
 		frame << '\n';
@@ -191,7 +222,7 @@ void Game::Render()
 	frame << "\nControls: Left/Right = Move, Down = Soft Drop, Z = Rotate, Space = Hard Drop, Q/Esc = Quit\n";
 
 	if (m_state == GameState::GameOver)
-		frame << "\nGame Over\n";
+		frame << "\nGame Over - Press R to restart, Q/Esc to quit\n";
 	else if (m_state == GameState::Exit)
 		frame << "\nQuit\n";
 
@@ -295,7 +326,4 @@ TetrominoType Game::CreateRandomTetrominoType()
 {
 	return static_cast<TetrominoType>(m_pieceDistribution(m_randomEngine));
 }
-
-
-
 
