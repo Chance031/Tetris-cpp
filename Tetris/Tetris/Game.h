@@ -55,6 +55,7 @@ private:
 	static constexpr int LockDelayMs = 500;
 	static constexpr int MaxLockResetCount = 15;
 	static constexpr int SoftDropScorePerCell = 1;
+	static constexpr int ComboScorePerStep = 50;
 
 	Board m_board;
 	Tetromino m_currentPiece;
@@ -67,6 +68,8 @@ private:
 	int m_score = 0;
 	int m_level = 1;
 	int m_totalLines = 0;
+	int m_combo = -1;
+	bool m_isBackToBackActive = false;
 
 	std::chrono::steady_clock::time_point m_lastFallTime;
 	std::chrono::milliseconds m_fallInterval{ InitialFallIntervalMs };

@@ -153,6 +153,8 @@ void Game::StartNewSession()
 	m_score = 0;
 	m_level = 1;
 	m_totalLines = 0;
+	m_combo = -1;
+	m_isBackToBackActive = false;
 	m_isLockRequired = false;
 	ResetLockDelay();
 	m_hasHoldPiece = false;
@@ -333,7 +335,9 @@ void Game::Render()
 	frame << "\x1B[H\x1B[J";
 	frame << "Score: " << m_score
 		<< "  Level: " << m_level
-		<< "  Lines: " << m_totalLines << '\n';
+		<< "  Lines: " << m_totalLines
+		<< "  Combo: " << std::max(m_combo, 0)
+		<< "  B2B: " << (m_isBackToBackActive ? "On" : "Off") << '\n';
 
 	for (int y = 0; y < Board::Height; ++y)
 	{
@@ -394,9 +398,30 @@ void Game::ProcessLockAndResolve()
 
 	if (clearedLines > 0)
 	{
+		const int lineClearScore = CalculateScore(clearedLines);
+
+		++m_combo;
 		m_totalLines += clearedLines;
-		m_score += CalculateScore(clearedLines);
+		m_score += lineClearScore;
+		m_score += m_combo * ComboScorePerStep * m_level;
+
+		if (clearedLines == 4)
+		{
+			if (m_isBackToBackActive)
+				m_score += lineClearScore / 2;
+
+			m_isBackToBackActive = true;
+		}
+		else
+		{
+			m_isBackToBackActive = false;
+		}
+
 		UpdateLevel();
+	}
+	else
+	{
+		m_combo = -1;
 	}
 
 	m_isLockRequired = false;
