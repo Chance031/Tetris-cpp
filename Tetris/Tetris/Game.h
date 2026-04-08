@@ -25,6 +25,9 @@ private:
 	void Update();
 	void Render();
 
+	int CalculateScore(int clearedLines) const;
+	void UpdateLevel();
+
 	void SpawnNextPiece();
 	void ProcessLockAndResolve();
 
@@ -51,3 +54,4 @@ private:
 	std::mt19937 m_randomEngine;
 	std::uniform_int_distribution<int> m_pieceDistribution{ 0, 6 };
 };
+

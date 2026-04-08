@@ -27,20 +27,24 @@ void Game::Initialize()
 
 void Game::Run()
 {
-	constexpr int TestFrameCount = 400;
 	constexpr auto FrameDelay = std::chrono::milliseconds(50);
 
 	std::cout << "\x1B[2J\x1B[H\x1B[?25l";
 
-	for (int frame = 0; frame < TestFrameCount && m_state == GameState::Playing; ++frame)
+	while (m_state == GameState::Playing)
 	{
 		HandleInput();
+
+		if (m_state != GameState::Playing)
+			break;
+
 		Update();
 		Render();
 
 		std::this_thread::sleep_for(FrameDelay);
 	}
 
+	Render();
 	std::cout << "\x1B[?25h" << std::flush;
 }
 
@@ -68,7 +72,7 @@ void Game::HandleInput()
 
 	if (key == KeyEscape || key == 'q' || key == 'Q')
 	{
-		m_state = GameState::GameOver;
+		m_state = GameState::Exit;
 		return;
 	}
 
@@ -104,6 +108,12 @@ void Game::HandleInput()
 
 void Game::Update()
 {
+	if (m_isLockRequired)
+	{
+		ProcessLockAndResolve();
+		return;
+	}
+
 	const auto now = std::chrono::steady_clock::now();
 
 	if (now - m_lastFallTime < m_fallInterval)
@@ -120,6 +130,7 @@ void Game::Update()
 void Game::Render()
 {
 	const auto currentBlocks = m_currentPiece.GetBlockLocations();
+	const auto nextBlocks = m_nextPiece.GetBlockLocations();
 	std::ostringstream frame;
 
 	frame << "\x1B[H";
@@ -154,7 +165,66 @@ void Game::Render()
 		frame << '\n';
 	}
 
+	frame << "\nNext Piece\n";
+
+	for (int y = 0; y < 4; ++y)
+	{
+		for (int x = 0; x < 4; ++x)
+		{
+			bool isNextPieceCell = false;
+
+			for (const Point& block : nextBlocks)
+			{
+				if (block.x == x && block.y == y)
+				{
+					isNextPieceCell = true;
+					break;
+				}
+			}
+
+			frame << (isNextPieceCell ? '@' : '.');
+		}
+
+		frame << '\n';
+	}
+
+	frame << "\nControls: Left/Right = Move, Down = Soft Drop, Z = Rotate, Space = Hard Drop, Q/Esc = Quit\n";
+
+	if (m_state == GameState::GameOver)
+		frame << "\nGame Over\n";
+	else if (m_state == GameState::Exit)
+		frame << "\nQuit\n";
+
 	std::cout << frame.str() << std::flush;
+}
+
+int Game::CalculateScore(int clearedLines) const
+{
+	switch (clearedLines)
+	{
+	case 1:
+		return 100 * m_level;
+	case 2:
+		return 300 * m_level;
+	case 3:
+		return 500 * m_level;
+	case 4:
+		return 800 * m_level;
+	default:
+		return 0;
+	}
+}
+
+void Game::UpdateLevel()
+{
+	m_level = (m_totalLines / 10) + 1;
+
+	const int fallInterval = 800 - (m_level - 1) * 50;
+
+	if (fallInterval < 100)
+		m_fallInterval = std::chrono::milliseconds(100);
+	else
+		m_fallInterval = std::chrono::milliseconds(fallInterval);
 }
 
 void Game::SpawnNextPiece()
@@ -174,11 +244,13 @@ void Game::ProcessLockAndResolve()
 	if (clearedLines > 0)
 	{
 		m_totalLines += clearedLines;
-		// TODO: 점수 계산
+		m_score += CalculateScore(clearedLines);
+		UpdateLevel();
 	}
 
 	m_isLockRequired = false;
 	SpawnNextPiece();
+	m_lastFallTime = std::chrono::steady_clock::now();
 
 	if (!m_board.CanPlace(m_currentPiece))
 		m_state = GameState::GameOver;
@@ -223,3 +295,7 @@ TetrominoType Game::CreateRandomTetrominoType()
 {
 	return static_cast<TetrominoType>(m_pieceDistribution(m_randomEngine));
 }
+
+
+
+

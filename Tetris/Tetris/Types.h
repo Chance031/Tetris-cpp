@@ -15,7 +15,8 @@ enum class GameState
 {
     Title,
     Playing,
-    GameOver
+    GameOver,
+    Exit
 };
 
 // 테트리스의 7종 블록 타입이다.
@@ -30,3 +31,5 @@ enum class TetrominoType
     T,
     Z
 };
+
+
