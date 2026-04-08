@@ -1,5 +1,6 @@
 #include "Game.h"
 
+#include <array>
 #include <chrono>
 #include <iostream>
 #include <sstream>
@@ -14,6 +15,40 @@ namespace
 	constexpr int KeyArrowLeft = 75;
 	constexpr int KeyArrowRight = 77;
 	constexpr int KeyArrowDown = 80;
+	constexpr int NextPiecePreviewSize = 4;
+
+	bool ContainsPoint(const std::array<Point, 4>& blocks, Point point)
+	{
+		for (const Point& block : blocks)
+		{
+			if (block.x == point.x && block.y == point.y)
+				return true;
+		}
+
+		return false;
+	}
+
+	char GetBoardCellDisplay(const Board& board, const std::array<Point, 4>& currentBlocks, Point point)
+	{
+		if (ContainsPoint(currentBlocks, point))
+			return '@';
+
+		if (board.IsCellFilled(point))
+			return '#';
+
+		return '.';
+	}
+
+	void RenderNextPiecePreviewRow(std::ostringstream& frame, const std::array<Point, 4>& nextBlocks, int previewY)
+	{
+		frame << "   ";
+
+		for (int previewX = 0; previewX < NextPiecePreviewSize; ++previewX)
+		{
+			Point previewPoint{ previewX, previewY };
+			frame << (ContainsPoint(nextBlocks, previewPoint) ? '@' : '.');
+		}
+	}
 }
 
 Game::Game() : m_randomEngine(std::random_device{}())
@@ -171,23 +206,7 @@ void Game::Render()
 		for (int x = 0; x < Board::Width; ++x)
 		{
 			Point currentPoint{ x, y };
-			bool isCurrentPieceCell = false;
-
-			for (const Point& block : currentBlocks)
-			{
-				if (block.x == currentPoint.x && block.y == currentPoint.y)
-				{
-					isCurrentPieceCell = true;
-					break;
-				}
-			}
-
-			if (isCurrentPieceCell)
-				frame << '@';
-			else if (m_board.IsCellFilled(currentPoint))
-				frame << '#';
-			else
-				frame << '.';
+			frame << GetBoardCellDisplay(m_board, currentBlocks, currentPoint);
 		}
 
 		if (y == 0)
@@ -196,24 +215,7 @@ void Game::Render()
 		}
 		else if (y >= 1 && y <= 4)
 		{
-			frame << "   ";
-			const int previewY = y - 1;
-
-			for (int previewX = 0; previewX < 4; ++previewX)
-			{
-				bool isNextPieceCell = false;
-
-				for (const Point& block : nextBlocks)
-				{
-					if (block.x == previewX && block.y == previewY)
-					{
-						isNextPieceCell = true;
-						break;
-					}
-				}
-
-				frame << (isNextPieceCell ? '@' : '.');
-			}
+			RenderNextPiecePreviewRow(frame, nextBlocks, y - 1);
 		}
 
 		frame << '\n';
