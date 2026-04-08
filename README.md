@@ -62,6 +62,8 @@ gantt
         랜덤 7-bag Init :done, t21893, 2026-04-08, 1d
     section Hold
         Init Hold :done, t97044, 2026-04-08, 1d
+    section Pause
+        Init Pause :done, t97166, 2026-04-08, 1d
 ```
 <!-- GANTT_END -->
 
@@ -112,4 +114,5 @@ gantt
 | 2026-04-08 | GhostPiece | Init GhostPiece |
 | 2026-04-08 | 7-bag | 랜덤 7-bag Init |
 | 2026-04-08 | Hold | Init Hold |
+| 2026-04-08 | Pause | Init Pause |
 <!-- LOG_END -->
