@@ -44,14 +44,14 @@ namespace
 		return '.';
 	}
 
-	void RenderNextPiecePreviewRow(std::ostringstream& frame, const std::array<Point, 4>& nextBlocks, int previewY)
+	void RenderPiecePreviewRow(std::ostringstream& frame, const std::array<Point, 4>& blocks, int previewY)
 	{
 		frame << "   ";
 
 		for (int previewX = 0; previewX < NextPiecePreviewSize; ++previewX)
 		{
 			Point previewPoint{ previewX, previewY };
-			frame << (ContainsPoint(nextBlocks, previewPoint) ? '@' : '.');
+			frame << (ContainsPoint(blocks, previewPoint) ? '@' : '.');
 		}
 	}
 }
@@ -112,6 +112,9 @@ void Game::StartNewSession()
 	m_level = 1;
 	m_totalLines = 0;
 	m_isLockRequired = false;
+	ResetLockDelay();
+	m_hasHoldPiece = false;
+	m_canHold = true;
 	m_state = GameState::Playing;
 
 	m_fallInterval = std::chrono::milliseconds(InitialFallIntervalMs);
@@ -162,6 +165,10 @@ void Game::HandleInput()
 	{
 		HardDropCurrentPiece();
 	}
+	else if (key == 'c' || key == 'C')
+	{
+		HoldCurrentPiece();
+	}
 }
 
 void Game::HandleTitleInput()
@@ -209,15 +216,18 @@ void Game::Update()
 
 	const auto now = std::chrono::steady_clock::now();
 
+	if (m_isTouchingGround && now - m_lockStartTime >= m_lockDelay)
+	{
+		m_isLockRequired = true;
+		ProcessLockAndResolve();
+		return;
+	}
+
 	if (now - m_lastFallTime < m_fallInterval)
 		return;
 
 	m_lastFallTime = now;
-
 	TryMoveCurrentPiece(0, 1, true);
-
-	if (m_isLockRequired)
-		ProcessLockAndResolve();
 }
 
 void Game::Render()
@@ -242,6 +252,7 @@ void Game::Render()
 	const auto currentBlocks = m_currentPiece.GetBlockLocations();
 	const auto nextBlocks = m_nextPiece.GetBlockLocations();
 	const auto ghostBlocks = GetGhostPiece().GetBlockLocations();
+	const auto holdBlocks = m_holdPiece.GetBlockLocations();
 	std::ostringstream frame;
 
 	frame << "\x1B[H\x1B[J";
@@ -263,13 +274,13 @@ void Game::Render()
 		}
 		else if (y >= 1 && y <= 4)
 		{
-			RenderNextPiecePreviewRow(frame, nextBlocks, y - 1);
+			RenderPiecePreviewRow(frame, nextBlocks, y - 1);
 		}
 
 		frame << '\n';
 	}
 
-	frame << "\nControls: Left/Right = Move, Down = Soft Drop, Z = Rotate, Space = Hard Drop, Q/Esc = Quit\n";
+	frame << "\nControls: Left/Right = Move, Down = Soft Drop, Z = Rotate, Space = Hard Drop, C = Hold, Q/Esc = Quit\n";
 
 	if (m_state == GameState::GameOver)
 		frame << "\nGame Over - Press R to restart, Q/Esc to quit\n";
@@ -325,7 +336,9 @@ void Game::ProcessLockAndResolve()
 	}
 
 	m_isLockRequired = false;
+	ResetLockDelay();
 	SpawnNextPiece();
+	m_canHold = true;
 	m_lastFallTime = std::chrono::steady_clock::now();
 
 	if (!m_board.CanPlace(m_currentPiece))
@@ -337,12 +350,15 @@ bool Game::TryMoveCurrentPiece(int dx, int dy, bool lockOnFail)
 	m_currentPiece.Move(dx, dy);
 
 	if (m_board.CanPlace(m_currentPiece))
+	{
+		RefreshLockDelayAfterSuccessfulMove();
 		return true;
+	}
 
 	m_currentPiece.Move(-dx, -dy);
 
 	if (lockOnFail)
-		m_isLockRequired = true;
+		StartLockDelay();
 
 	return false;
 }
@@ -352,20 +368,72 @@ bool Game::TryRotateCurrentPieceCW()
 	m_currentPiece.RotateCW();
 
 	if (m_board.CanPlace(m_currentPiece))
+	{
+		RefreshLockDelayAfterSuccessfulMove();
 		return true;
+	}
 
 	for (int kick : { 1, -1, 2, -2 })
 	{
 		m_currentPiece.Move(kick, 0);
 
 		if (m_board.CanPlace(m_currentPiece))
+		{
+			RefreshLockDelayAfterSuccessfulMove();
 			return true;
+		}
 
 		m_currentPiece.Move(-kick, 0);
 	}
 
 	m_currentPiece.RotateCCW();
 	return false;
+}
+
+void Game::StartLockDelay()
+{
+	if (m_isTouchingGround)
+		return;
+
+	m_isTouchingGround = true;
+	m_lockResetCount = 0;
+	m_lockStartTime = std::chrono::steady_clock::now();
+}
+
+void Game::ResetLockDelay()
+{
+	m_isTouchingGround = false;
+	m_lockResetCount = 0;
+	m_lockStartTime = std::chrono::steady_clock::now();
+}
+
+void Game::RefreshLockDelayAfterSuccessfulMove()
+{
+	if (!IsCurrentPieceTouchingGround())
+	{
+		ResetLockDelay();
+		return;
+	}
+
+	if (!m_isTouchingGround)
+	{
+		StartLockDelay();
+		return;
+	}
+
+	if (m_lockResetCount >= MaxLockResetCount)
+		return;
+
+	++m_lockResetCount;
+	m_lockStartTime = std::chrono::steady_clock::now();
+}
+
+bool Game::IsCurrentPieceTouchingGround() const
+{
+	Tetromino testPiece = m_currentPiece;
+	testPiece.Move(0, 1);
+
+	return !m_board.CanPlace(testPiece);
 }
 
 void Game::HardDropCurrentPiece()
@@ -380,9 +448,58 @@ void Game::HardDropCurrentPiece()
 	m_isLockRequired = true;
 }
 
+void Game::HoldCurrentPiece()
+{
+	if (!m_canHold)
+		return;
+
+	const TetrominoType currentType = m_currentPiece.GetType();
+
+	if (m_hasHoldPiece)
+	{
+		const TetrominoType heldType = m_holdPiece.GetType();
+		m_holdPiece = Tetromino(currentType);
+		m_currentPiece = Tetromino(heldType);
+		m_currentPiece.SetPosition(Board::Width / 2 - 1, 0);
+	}
+	else
+	{
+		m_holdPiece = Tetromino(currentType);
+		m_hasHoldPiece = true;
+		SpawnNextPiece();
+	}
+
+	m_canHold = false;
+	m_isLockRequired = false;
+	ResetLockDelay();
+	m_lastFallTime = std::chrono::steady_clock::now();
+
+	if (!m_board.CanPlace(m_currentPiece))
+		m_state = GameState::GameOver;
+}
 TetrominoType Game::CreateRandomTetrominoType()
 {
-	return static_cast<TetrominoType>(m_pieceDistribution(m_randomEngine));
+	if (m_pieceBag.empty())
+		RefillPieceBag();
+
+	const TetrominoType type = m_pieceBag.back();
+	m_pieceBag.pop_back();
+	return type;
+}
+
+void Game::RefillPieceBag()
+{
+	m_pieceBag = {
+		TetrominoType::I,
+		TetrominoType::J,
+		TetrominoType::L,
+		TetrominoType::O,
+		TetrominoType::S,
+		TetrominoType::T,
+		TetrominoType::Z
+	};
+
+	std::shuffle(m_pieceBag.begin(), m_pieceBag.end(), m_randomEngine);
 }
 
 Tetromino Game::GetGhostPiece() const

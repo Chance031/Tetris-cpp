@@ -6,6 +6,7 @@
 
 #include <chrono>
 #include <random>
+#include <vector>
 
 // Game 루프 전체를 조율하는 최상위 클래스다.
 // 입력 처리, 상태 업데이트, 렌더링 순서를 관리하고
@@ -35,8 +36,14 @@ private:
 
 	bool TryMoveCurrentPiece(int dx, int dy, bool lockOnFail);
 	bool TryRotateCurrentPieceCW();
+	void StartLockDelay();
+	void ResetLockDelay();
+	void RefreshLockDelayAfterSuccessfulMove();
+	bool IsCurrentPieceTouchingGround() const;
 	void HardDropCurrentPiece();
+	void HoldCurrentPiece();
 	TetrominoType CreateRandomTetrominoType();
+	void RefillPieceBag();
 
 	Tetromino GetGhostPiece() const;
 
@@ -44,10 +51,13 @@ private:
 	static constexpr int InitialFallIntervalMs = 800;
 	static constexpr int FallIntervalDecreasePerLevel = 50;
 	static constexpr int MinFallIntervalMs = 100;
+	static constexpr int LockDelayMs = 500;
+	static constexpr int MaxLockResetCount = 15;
 
 	Board m_board;
 	Tetromino m_currentPiece;
 	Tetromino m_nextPiece;
+	Tetromino m_holdPiece;
 
 	GameState m_state = GameState::Title;
 	bool m_isLockRequired = false; // true이면 다음 Update()에서 현재 블록을 보드에 고정한다.
@@ -58,8 +68,15 @@ private:
 
 	std::chrono::steady_clock::time_point m_lastFallTime;
 	std::chrono::milliseconds m_fallInterval{ InitialFallIntervalMs };
+	std::chrono::steady_clock::time_point m_lockStartTime;
+	std::chrono::milliseconds m_lockDelay{ LockDelayMs };
+	bool m_isTouchingGround = false;
+	int m_lockResetCount = 0;
+
+	bool m_hasHoldPiece = false;
+	bool m_canHold = true;
 
 	std::mt19937 m_randomEngine;
-	std::uniform_int_distribution<int> m_pieceDistribution{ 0, 6 };
+	std::vector<TetrominoType> m_pieceBag;
 };
 
