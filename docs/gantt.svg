@@ -1,0 +1,100 @@
+<svg viewBox="0 0 960 420" xmlns="http://www.w3.org/2000/svg" role="img">
+<title>Tetris-cpp 개발 일지</title>
+<style>
+  text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+  .hdr  { font-size: 10px; fill: #888780; font-weight: 500; }
+  .sec  { font-size: 11px; fill: #2C2C2A; font-weight: 500; }
+  .lbl  { font-size: 11px; fill: #444441; }
+  .tiny { font-size: 9px;  fill: #ffffff; }
+  .log-date { font-size: 10px; fill: #888780; }
+  .log-sec  { font-size: 10px; fill: #5F5E5A; }
+  .log-txt  { font-size: 10px; fill: #444441; }
+  .log-hdr  { font-size: 10px; fill: #5F5E5A; font-weight: 500; }
+</style>
+<rect width="960" height="420" fill="#ffffff"/>
+<rect x="0" y="0" width="960" height="28" fill="#F1EFE8"/>
+<text x="8"   y="18" class="hdr">섹션</text>
+<text x="130" y="18" class="hdr">작업</text>
+<text x="430" y="18" class="hdr" text-anchor="middle">Apr 7</text>
+<text x="630" y="18" class="hdr" text-anchor="middle">Apr 8</text>
+<text x="830" y="18" class="hdr" text-anchor="middle">Apr 9</text>
+<line x1="0" y1="28" x2="960" y2="28" stroke="#D3D1C7" stroke-width="0.5"/>
+<line x1="530" y1="0" x2="530" y2="270" stroke="#D3D1C7" stroke-width="0.5" stroke-dasharray="3,2"/>
+<line x1="730" y1="0" x2="730" y2="270" stroke="#D3D1C7" stroke-width="0.5" stroke-dasharray="3,2"/>
+<line x1="120" y1="0" x2="120" y2="270" stroke="#D3D1C7" stroke-width="0.5"/>
+<line x1="330" y1="0" x2="330" y2="270" stroke="#D3D1C7" stroke-width="0.5"/>
+<rect x="0" y="28" width="960" height="30" fill="#ffffff"/>
+<text x="8"   y="47" class="sec">설계·Board</text>
+<text x="130" y="47" class="lbl">초기화 / Tetromino / Board</text>
+<rect x="473" y="35" width="57" height="14" rx="3" fill="#1D9E75"/>
+<text x="501" y="45" text-anchor="middle" class="tiny">Init · Tetromino · Board</text>
+<line x1="0" y1="58" x2="960" y2="58" stroke="#F1EFE8" stroke-width="0.5"/>
+<rect x="0" y="58" width="960" height="30" fill="#F9F8F6"/>
+<text x="8"   y="77" class="sec">Game 기본</text>
+<text x="130" y="77" class="lbl">Game Init / GameOver / UI</text>
+<rect x="636" y="65" width="75" height="14" rx="3" fill="#7F77DD"/>
+<text x="673" y="75" text-anchor="middle" class="tiny">Game · GameOver · UI</text>
+<line x1="0" y1="88" x2="960" y2="88" stroke="#F1EFE8" stroke-width="0.5"/>
+<rect x="0" y="88" width="960" height="30" fill="#ffffff"/>
+<text x="8"   y="107" class="sec">핵심 기능</text>
+<text x="130" y="107" class="lbl">Ghost / 7-bag / Hold / Pause / SoftDrop</text>
+<rect x="710" y="95" width="22" height="14" rx="3" fill="#BA7517"/>
+<text x="721" y="105" text-anchor="middle" class="tiny">G·7·H·P·SD</text>
+<line x1="0" y1="118" x2="960" y2="118" stroke="#F1EFE8" stroke-width="0.5"/>
+<rect x="0" y="118" width="960" height="30" fill="#F9F8F6"/>
+<text x="8"   y="137" class="sec">점수·UI</text>
+<text x="130" y="137" class="lbl">SoftDrop점수 / Combo·B2B / T-Spin / 색상</text>
+<rect x="723" y="125" width="28" height="14" rx="3" fill="#D85A30"/>
+<text x="737" y="135" text-anchor="middle" class="tiny">Combo·T-Spin·Color</text>
+<line x1="0" y1="148" x2="960" y2="148" stroke="#F1EFE8" stroke-width="0.5"/>
+<rect x="0" y="148" width="960" height="30" fill="#ffffff"/>
+<text x="8"   y="167" class="sec">SRS·리팩토링</text>
+<text x="130" y="167" class="lbl">WallKick / SRS / 코드 분리 / 타입 정리</text>
+<rect x="734" y="155" width="18" height="14" rx="3" fill="#378ADD"/>
+<text x="743" y="165" text-anchor="middle" class="tiny">SRS·분리</text>
+<line x1="0" y1="178" x2="960" y2="178" stroke="#F1EFE8" stroke-width="0.5"/>
+<rect x="0" y="178" width="960" height="30" fill="#F9F8F6"/>
+<text x="8"   y="197" class="sec">마무리</text>
+<text x="130" y="197" class="lbl">HighScore / 주석 정리 / 코드 정리</text>
+<rect x="737" y="185" width="12" height="14" rx="3" fill="#D4537E"/>
+<text x="743" y="195" text-anchor="middle" class="tiny">HS·주석</text>
+<line x1="0" y1="208" x2="960" y2="208" stroke="#F1EFE8" stroke-width="0.5"/>
+<rect x="0" y="208" width="960" height="24" fill="#F1EFE8"/>
+<rect x="330" y="215" width="10" height="10" rx="2" fill="#1D9E75"/><text x="344" y="224" class="hdr">설계·Board</text>
+<rect x="420" y="215" width="10" height="10" rx="2" fill="#7F77DD"/><text x="434" y="224" class="hdr">Game 기본</text>
+<rect x="510" y="215" width="10" height="10" rx="2" fill="#BA7517"/><text x="524" y="224" class="hdr">핵심 기능</text>
+<rect x="600" y="215" width="10" height="10" rx="2" fill="#D85A30"/><text x="614" y="224" class="hdr">점수·UI</text>
+<rect x="670" y="215" width="10" height="10" rx="2" fill="#378ADD"/><text x="684" y="224" class="hdr">SRS·리팩토링</text>
+<rect x="770" y="215" width="10" height="10" rx="2" fill="#D4537E"/><text x="784" y="224" class="hdr">마무리</text>
+<line x1="0" y1="232" x2="960" y2="232" stroke="#D3D1C7" stroke-width="0.5"/>
+<rect x="0" y="232" width="960" height="22" fill="#F1EFE8"/>
+<text x="8"   y="247" class="log-hdr">날짜</text>
+<text x="110" y="247" class="log-hdr">섹션</text>
+<text x="230" y="247" class="log-hdr">작업 내용</text>
+<line x1="0" y1="254" x2="960" y2="254" stroke="#D3D1C7" stroke-width="0.5"/>
+<rect x="0" y="254" width="960" height="18" fill="#ffffff"/>
+<text x="8"   y="266" class="log-date">2026-04-07</text>
+<text x="110" y="266" class="log-sec">설계·Board</text>
+<text x="230" y="266" class="log-txt">프로젝트 초기화 / Tetromino .h/.cpp 구현 / Board .h/.cpp 구현 / 리팩토링</text>
+<rect x="0" y="272" width="960" height="18" fill="#F9F8F6"/>
+<text x="8"   y="284" class="log-date">2026-04-08</text>
+<text x="110" y="284" class="log-sec">Game 기본</text>
+<text x="230" y="284" class="log-txt">Game .h/.cpp 구현 / Update·Render / 키 입력 / 레벨·점수 / GameOver / UI 개선</text>
+<rect x="0" y="290" width="960" height="18" fill="#ffffff"/>
+<text x="8"   y="302" class="log-date">2026-04-08</text>
+<text x="110" y="302" class="log-sec">핵심 기능</text>
+<text x="230" y="302" class="log-txt">GhostPiece / 7-bag 랜덤 / Hold / Pause / SoftDrop 점수</text>
+<rect x="0" y="308" width="960" height="18" fill="#F9F8F6"/>
+<text x="8"   y="320" class="log-date">2026-04-08</text>
+<text x="110" y="320" class="log-sec">점수·UI</text>
+<text x="230" y="320" class="log-txt">Combo · B2B 기능 / T-Spin 감지</text>
+<rect x="0" y="326" width="960" height="18" fill="#ffffff"/>
+<text x="8"   y="338" class="log-date">2026-04-09</text>
+<text x="110" y="338" class="log-sec">SRS·리팩토링</text>
+<text x="230" y="338" class="log-txt">WallKick / SRS 전체 구현 / 회전 코드 리팩토링 / Renderer 분리 / 타입 정리</text>
+<rect x="0" y="344" width="960" height="18" fill="#F9F8F6"/>
+<text x="8"   y="356" class="log-date">2026-04-09</text>
+<text x="110" y="356" class="log-sec">마무리</text>
+<text x="230" y="356" class="log-txt">HighScore 저장/로드 / 색상 추가 / 코드 정리 / 주석 수정</text>
+<line x1="0" y1="362" x2="960" y2="362" stroke="#D3D1C7" stroke-width="0.5"/>
+</svg>
