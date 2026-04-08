@@ -6,6 +6,7 @@
 
 #include <chrono>
 #include <random>
+#include <string>
 #include <vector>
 
 // Game 루프 전체를 조율하는 최상위 클래스다.
@@ -30,6 +31,7 @@ private:
 	void Render();
 
 	int CalculateScore(int clearedLines) const;
+	int CalculateTSpinScore(int clearedLines) const;
 	void UpdateLevel();
 
 	void SpawnNextPiece();
@@ -41,8 +43,12 @@ private:
 	void ResetLockDelay();
 	void RefreshLockDelayAfterSuccessfulMove();
 	bool IsCurrentPieceTouchingGround() const;
+	bool DetectTSpin() const;
 	void HardDropCurrentPiece();
 	void HoldCurrentPiece();
+#ifdef _DEBUG
+	void SetupDebugTSpin();
+#endif
 	TetrominoType CreateRandomTetrominoType();
 	void RefillPieceBag();
 
@@ -56,6 +62,10 @@ private:
 	static constexpr int MaxLockResetCount = 15;
 	static constexpr int SoftDropScorePerCell = 1;
 	static constexpr int ComboScorePerStep = 50;
+	static constexpr int TSpinNoLineScore = 400;
+	static constexpr int TSpinSingleScore = 800;
+	static constexpr int TSpinDoubleScore = 1200;
+	static constexpr int TSpinTripleScore = 1600;
 
 	Board m_board;
 	Tetromino m_currentPiece;
@@ -70,6 +80,7 @@ private:
 	int m_totalLines = 0;
 	int m_combo = -1;
 	bool m_isBackToBackActive = false;
+	std::string m_lastClearMessage;
 
 	std::chrono::steady_clock::time_point m_lastFallTime;
 	std::chrono::milliseconds m_fallInterval{ InitialFallIntervalMs };
@@ -77,6 +88,7 @@ private:
 	std::chrono::milliseconds m_lockDelay{ LockDelayMs };
 	bool m_isTouchingGround = false;
 	int m_lockResetCount = 0;
+	bool m_lastMoveWasRotation = false;
 
 	bool m_hasHoldPiece = false;
 	bool m_canHold = true;

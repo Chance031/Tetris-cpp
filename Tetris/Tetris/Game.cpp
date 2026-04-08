@@ -155,7 +155,9 @@ void Game::StartNewSession()
 	m_totalLines = 0;
 	m_combo = -1;
 	m_isBackToBackActive = false;
+	m_lastClearMessage.clear();
 	m_isLockRequired = false;
+	m_lastMoveWasRotation = false;
 	ResetLockDelay();
 	m_hasHoldPiece = false;
 	m_canHold = true;
@@ -194,10 +196,12 @@ void Game::HandleInput()
 		switch (key)
 		{
 		case KeyArrowLeft:
-			TryMoveCurrentPiece(-1, 0, false);
+			if (TryMoveCurrentPiece(-1, 0, false))
+				m_lastMoveWasRotation = false;
 			break;
 		case KeyArrowRight:
-			TryMoveCurrentPiece(1, 0, false);
+			if (TryMoveCurrentPiece(1, 0, false))
+				m_lastMoveWasRotation = false;
 			break;
 		case KeyArrowDown:
 			if (TryMoveCurrentPiece(0, 1, true))
@@ -223,7 +227,7 @@ void Game::HandleInput()
 #ifdef _DEBUG
 	else if (key == 'b' || key == 'B')
 	{
-		m_board.FillDebugLine(Board::Height - 1, Board::Width / 2);
+		SetupDebugTSpin();
 	}
 #endif
 }
@@ -337,7 +341,12 @@ void Game::Render()
 		<< "  Level: " << m_level
 		<< "  Lines: " << m_totalLines
 		<< "  Combo: " << std::max(m_combo, 0)
-		<< "  B2B: " << (m_isBackToBackActive ? "On" : "Off") << '\n';
+		<< "  B2B: " << (m_isBackToBackActive ? "On" : "Off");
+
+	if (!m_lastClearMessage.empty())
+		frame << "  Last: " << m_lastClearMessage;
+
+	frame << '\n';
 
 	for (int y = 0; y < Board::Height; ++y)
 	{
@@ -348,7 +357,7 @@ void Game::Render()
 
 	frame << "\nControls: Left/Right = Move, Down = Soft Drop, Z = Rotate, Space = Hard Drop, C = Hold, P = Pause, Q/Esc = Quit\n";
 #ifdef _DEBUG
-	frame << "Debug: B = Fill Bottom Line\n";
+	frame << "Debug: B = T-Spin Setup\n";
 #endif
 
 	RenderStatusMessage(frame, m_state);
@@ -373,6 +382,23 @@ int Game::CalculateScore(int clearedLines) const
 	}
 }
 
+int Game::CalculateTSpinScore(int clearedLines) const
+{
+	switch (clearedLines)
+	{
+	case 0:
+		return TSpinNoLineScore * m_level;
+	case 1:
+		return TSpinSingleScore * m_level;
+	case 2:
+		return TSpinDoubleScore * m_level;
+	case 3:
+		return TSpinTripleScore * m_level;
+	default:
+		return 0;
+	}
+}
+
 void Game::UpdateLevel()
 {
 	m_level = (m_totalLines / 10) + 1;
@@ -386,26 +412,46 @@ void Game::SpawnNextPiece()
 {
 	m_currentPiece = m_nextPiece;
 	m_currentPiece.SetPosition(Board::Width / 2 - 1, 0);
+	m_lastMoveWasRotation = false;
 
 	m_nextPiece = Tetromino(CreateRandomTetrominoType());
 }
 
 void Game::ProcessLockAndResolve()
 {
+	const bool isTSpin = DetectTSpin();
+
 	m_board.LockPiece(m_currentPiece);
 
 	const int clearedLines = m_board.ClearLines();
 
+	if (isTSpin && clearedLines == 0)
+	{
+		m_score += CalculateTSpinScore(clearedLines);
+		m_lastClearMessage = "T-Spin";
+	}
+	else if (clearedLines == 0)
+	{
+		m_lastClearMessage.clear();
+	}
+
 	if (clearedLines > 0)
 	{
-		const int lineClearScore = CalculateScore(clearedLines);
+		const int lineClearScore = isTSpin ? CalculateTSpinScore(clearedLines) : CalculateScore(clearedLines);
+		const bool isDifficultClear = (clearedLines == 4) || isTSpin;
+		const char* clearNames[] = { "", "Single", "Double", "Triple", "Tetris" };
+
+		if (isTSpin)
+			m_lastClearMessage = std::string("T-Spin ") + clearNames[clearedLines];
+		else
+			m_lastClearMessage = clearNames[clearedLines];
 
 		++m_combo;
 		m_totalLines += clearedLines;
 		m_score += lineClearScore;
 		m_score += m_combo * ComboScorePerStep * m_level;
 
-		if (clearedLines == 4)
+		if (isDifficultClear)
 		{
 			if (m_isBackToBackActive)
 				m_score += lineClearScore / 2;
@@ -459,20 +505,35 @@ bool Game::TryRotateCurrentPieceCW()
 	if (m_board.CanPlace(m_currentPiece))
 	{
 		RefreshLockDelayAfterSuccessfulMove();
+		m_lastMoveWasRotation = true;
 		return true;
 	}
 
-	for (int kick : { 1, -1, 2, -2 })
+	const std::array<Point, 10> kicks{
+		Point{ 1, 0 },
+		Point{ -1, 0 },
+		Point{ 2, 0 },
+		Point{ -2, 0 },
+		Point{ 0, -1 },
+		Point{ 1, -1 },
+		Point{ -1, -1 },
+		Point{ 0, 1 },
+		Point{ 1, 1 },
+		Point{ -1, 1 }
+	};
+
+	for (const Point& kick : kicks)
 	{
-		m_currentPiece.Move(kick, 0);
+		m_currentPiece.Move(kick.x, kick.y);
 
 		if (m_board.CanPlace(m_currentPiece))
 		{
 			RefreshLockDelayAfterSuccessfulMove();
+			m_lastMoveWasRotation = true;
 			return true;
 		}
 
-		m_currentPiece.Move(-kick, 0);
+		m_currentPiece.Move(-kick.x, -kick.y);
 	}
 
 	m_currentPiece.RotateCCW();
@@ -525,6 +586,34 @@ bool Game::IsCurrentPieceTouchingGround() const
 	return !m_board.CanPlace(testPiece);
 }
 
+bool Game::DetectTSpin() const
+{
+	if (m_currentPiece.GetType() != TetrominoType::T)
+		return false;
+
+	if (!m_lastMoveWasRotation)
+		return false;
+
+	const Point position = m_currentPiece.GetPosition();
+	const Point center{ position.x + 1, position.y + 1 };
+	const std::array<Point, 4> corners{
+		Point{ center.x - 1, center.y - 1 },
+		Point{ center.x + 1, center.y - 1 },
+		Point{ center.x - 1, center.y + 1 },
+		Point{ center.x + 1, center.y + 1 }
+	};
+
+	int blockedCorners = 0;
+
+	for (const Point& corner : corners)
+	{
+		if (!m_board.IsInside(corner) || m_board.IsCellFilled(corner))
+			++blockedCorners;
+	}
+
+	return blockedCorners >= 3;
+}
+
 void Game::HardDropCurrentPiece()
 {
 	int dropped = 0;
@@ -560,6 +649,7 @@ void Game::HoldCurrentPiece()
 
 	m_canHold = false;
 	m_isLockRequired = false;
+	m_lastMoveWasRotation = false;
 	ResetLockDelay();
 	m_lastFallTime = std::chrono::steady_clock::now();
 
@@ -567,6 +657,29 @@ void Game::HoldCurrentPiece()
 		m_state = GameState::GameOver;
 }
 
+#ifdef _DEBUG
+void Game::SetupDebugTSpin()
+{
+	m_board.Reset();
+
+	m_currentPiece = Tetromino(TetrominoType::T);
+	m_currentPiece.SetPosition(Board::Width / 2 - 1, Board::Height - 3);
+	m_currentPiece.SetRotation(0);
+
+	const Point position = m_currentPiece.GetPosition();
+	const Point center{ position.x + 1, position.y + 1 };
+
+	m_board.SetDebugCell({ center.x - 1, center.y - 1 }, true);
+	m_board.SetDebugCell({ center.x + 1, center.y - 1 }, true);
+	m_board.SetDebugCell({ center.x - 1, center.y + 1 }, true);
+
+	m_isLockRequired = false;
+	m_lastMoveWasRotation = false;
+	ResetLockDelay();
+	m_lastFallTime = std::chrono::steady_clock::now();
+	m_lastClearMessage = "Debug T-Spin setup: press Z, then Space";
+}
+#endif
 TetrominoType Game::CreateRandomTetrominoType()
 {
 	if (m_pieceBag.empty())

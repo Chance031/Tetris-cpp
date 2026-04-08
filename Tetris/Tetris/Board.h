@@ -27,6 +27,7 @@ public:
 
 #ifdef _DEBUG
 	void FillDebugLine(int y, int emptyX);
+	void SetDebugCell(Point point, bool isFilled);
 #endif
 
 private:
