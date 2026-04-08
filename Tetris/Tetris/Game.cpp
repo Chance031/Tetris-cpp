@@ -12,6 +12,7 @@ namespace
 {
 	constexpr int KeyEscape = 27;
 	constexpr int KeyEnter = 13;
+	constexpr int KeyBackspace = 8;
 	constexpr int KeyExtendedPrefix = 224;
 	constexpr int KeyExtendedPrefixAlt = 0;
 	constexpr int KeyArrowLeft = 75;
@@ -205,6 +206,7 @@ void Game::StartNewSession()
 	m_combo = -1;
 	m_isBackToBackActive = false;
 	m_lastClearMessage.clear();
+	m_needsHighScoreName = false;
 	m_isLockRequired = false;
 	m_lastMoveWasRotation = false;
 	ResetLockDelay();
@@ -324,6 +326,12 @@ void Game::HandlePausedInput()
 }
 void Game::HandleGameOverInput()
 {
+	if (m_needsHighScoreName)
+	{
+		PromptAndSaveHighScore();
+		Render();
+	}
+
 	while (m_state == GameState::GameOver)
 	{
 		const int key = _getch();
@@ -373,6 +381,7 @@ void Game::Render()
 		titleFrame << "TETRIS\n\n";
 		titleFrame << "Press Enter or Space to Start\n";
 		titleFrame << "Press Q or Esc to Quit\n";
+		RenderHighScores(titleFrame);
 		std::cout << titleFrame.str() << std::flush;
 		return;
 	}
@@ -415,9 +424,84 @@ void Game::Render()
 
 	RenderStatusMessage(frame, m_state);
 
+	if (m_state == GameState::GameOver)
+		RenderHighScores(frame);
+
 	std::cout << frame.str() << std::flush;
 }
 
+void Game::PromptAndSaveHighScore()
+{
+	m_needsHighScoreName = false;
+
+	std::string name;
+	std::cout << "\nNew score: " << m_score << "\n";
+	std::cout << "Enter your name: " << std::flush;
+
+	while (true)
+	{
+		const int key = _getch();
+
+		if (key == KeyEnter)
+			break;
+
+		if (key == KeyBackspace)
+		{
+			if (!name.empty())
+			{
+				name.pop_back();
+				std::cout << "\b \b" << std::flush;
+			}
+
+			continue;
+		}
+
+		if (key < 32 || key > 126)
+			continue;
+
+		if (static_cast<int>(name.size()) >= MaxPlayerNameLength)
+			continue;
+
+		name.push_back(static_cast<char>(key));
+		std::cout << static_cast<char>(key) << std::flush;
+	}
+
+	if (name.empty())
+		name = "PLAYER";
+
+	AddHighScore(name, m_score);
+}
+
+void Game::AddHighScore(const std::string& name, int score)
+{
+	m_highScores.push_back({ name, score });
+
+	std::sort(m_highScores.begin(), m_highScores.end(), [](const HighScoreEntry& lhs, const HighScoreEntry& rhs)
+	{
+		return lhs.score > rhs.score;
+	});
+
+	if (static_cast<int>(m_highScores.size()) > MaxHighScoreCount)
+		m_highScores.resize(MaxHighScoreCount);
+}
+
+void Game::RenderHighScores(std::ostringstream& frame) const
+{
+	frame << "\nHigh Scores\n";
+
+	if (m_highScores.empty())
+	{
+		frame << "  No scores yet\n";
+		return;
+	}
+
+	for (int i = 0; i < static_cast<int>(m_highScores.size()); ++i)
+	{
+		frame << "  " << (i + 1) << ". "
+			<< m_highScores[i].name << " - "
+			<< m_highScores[i].score << '\n';
+	}
+}
 int Game::CalculateScore(int clearedLines) const
 {
 	switch (clearedLines)
@@ -530,7 +614,10 @@ void Game::ProcessLockAndResolve()
 	m_lastFallTime = std::chrono::steady_clock::now();
 
 	if (!m_board.CanPlace(m_currentPiece))
+	{
 		m_state = GameState::GameOver;
+		m_needsHighScoreName = true;
+	}
 }
 
 bool Game::TryMoveCurrentPiece(int dx, int dy, bool lockOnFail)
@@ -696,7 +783,10 @@ void Game::HoldCurrentPiece()
 	m_lastFallTime = std::chrono::steady_clock::now();
 
 	if (!m_board.CanPlace(m_currentPiece))
+	{
 		m_state = GameState::GameOver;
+		m_needsHighScoreName = true;
+	}
 }
 
 #ifdef _DEBUG

@@ -5,6 +5,7 @@
 #include "Types.h"
 
 #include <chrono>
+#include <iosfwd>
 #include <random>
 #include <string>
 #include <vector>
@@ -13,6 +14,12 @@ enum class RotationDirection
 {
 	Clockwise,
 	CounterClockwise
+};
+
+struct HighScoreEntry
+{
+	std::string name;
+	int score = 0;
 };
 
 // Game 루프 전체를 조율하는 최상위 클래스다.
@@ -35,6 +42,9 @@ private:
 	void HandleGameOverInput();
 	void Update();
 	void Render();
+	void PromptAndSaveHighScore();
+	void AddHighScore(const std::string& name, int score);
+	void RenderHighScores(std::ostringstream& frame) const;
 
 	int CalculateScore(int clearedLines) const;
 	int CalculateTSpinScore(int clearedLines) const;
@@ -72,6 +82,8 @@ private:
 	static constexpr int TSpinSingleScore = 800;
 	static constexpr int TSpinDoubleScore = 1200;
 	static constexpr int TSpinTripleScore = 1600;
+	static constexpr int MaxHighScoreCount = 5;
+	static constexpr int MaxPlayerNameLength = 12;
 
 	Board m_board;
 	Tetromino m_currentPiece;
@@ -87,6 +99,7 @@ private:
 	int m_combo = -1;
 	bool m_isBackToBackActive = false;
 	std::string m_lastClearMessage;
+	bool m_needsHighScoreName = false;
 
 	std::chrono::steady_clock::time_point m_lastFallTime;
 	std::chrono::milliseconds m_fallInterval{ InitialFallIntervalMs };
@@ -101,5 +114,6 @@ private:
 
 	std::mt19937 m_randomEngine;
 	std::vector<TetrominoType> m_pieceBag;
+	std::vector<HighScoreEntry> m_highScores;
 };
 
