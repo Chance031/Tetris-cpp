@@ -1,5 +1,6 @@
 #include "Game.h"
 
+#include <algorithm>
 #include <array>
 #include <chrono>
 #include <iostream>
@@ -16,10 +17,6 @@ namespace
 	constexpr int KeyArrowRight = 77;
 	constexpr int KeyArrowDown = 80;
 	constexpr int NextPiecePreviewSize = 4;
-
-	constexpr int InitialFallIntervalMs = 800;
-	constexpr int FallIntervalDecreasePerLevel = 50;
-	constexpr int MinFallIntervalMs = 100;
 
 	bool ContainsPoint(const std::array<Point, 4>& blocks, Point point)
 	{
@@ -316,7 +313,7 @@ bool Game::TryRotateCurrentPieceCW()
 	{
 		m_currentPiece.Move(kick, 0);
 
-		if (m_board.CanPlace(m_currentPiece)) 
+		if (m_board.CanPlace(m_currentPiece))
 			return true;
 
 		m_currentPiece.Move(-kick, 0);
@@ -328,9 +325,12 @@ bool Game::TryRotateCurrentPieceCW()
 
 void Game::HardDropCurrentPiece()
 {
+	int dropped = 0;
+
 	while (TryMoveCurrentPiece(0, 1, false))
-	{
-	}
+		++dropped;
+
+	m_score += dropped * 2;
 
 	m_isLockRequired = true;
 }

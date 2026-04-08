@@ -38,11 +38,15 @@ private:
 	TetrominoType CreateRandomTetrominoType();
 
 private:
+	static constexpr int InitialFallIntervalMs = 800;
+	static constexpr int FallIntervalDecreasePerLevel = 50;
+	static constexpr int MinFallIntervalMs = 100;
+
 	Board m_board;
 	Tetromino m_currentPiece;
 	Tetromino m_nextPiece;
 
-	GameState m_state = GameState::Title;
+	GameState m_state = GameState::Playing;
 	bool m_isLockRequired = false; // true이면 다음 Update()에서 현재 블록을 보드에 고정한다.
 
 	int m_score = 0;
@@ -50,7 +54,7 @@ private:
 	int m_totalLines = 0;
 
 	std::chrono::steady_clock::time_point m_lastFallTime;
-	std::chrono::milliseconds m_fallInterval{ 800 };
+	std::chrono::milliseconds m_fallInterval{ InitialFallIntervalMs };
 
 	std::mt19937 m_randomEngine;
 	std::uniform_int_distribution<int> m_pieceDistribution{ 0, 6 };
