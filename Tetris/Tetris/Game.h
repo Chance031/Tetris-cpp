@@ -105,10 +105,10 @@ private:
 	int m_score = 0;
 	int m_level = 1;
 	int m_totalLines = 0;
-	int m_combo = -1;
-	bool m_isBackToBackActive = false;
-	std::string m_lastClearMessage;
-	bool m_needsHighScoreName = false;
+	int m_combo = -1;                   // -1은 콤보가 없는 상태를 뜻한다. 줄을 클리어할 때마다 1씩 증가한다.
+	bool m_isBackToBackActive = false;  // 어려운 클리어(테트리스, T-Spin)가 연속으로 이어지는 상태를 뜻한다.
+	std::string m_lastClearMessage;     // 가장 최근 클리어 종류를 화면에 표시하기 위한 문자열이다.
+	bool m_needsHighScoreName = false;  // true이면 게임 오버 후 이름 입력 절차를 시작한다.
 
 	// 시간 기반 낙하와 고정 지연을 위한 상태다.
 	std::chrono::steady_clock::time_point m_lastFallTime;

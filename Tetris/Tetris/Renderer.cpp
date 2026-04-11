@@ -20,7 +20,7 @@ namespace Renderer
 		return false;
 	}
 
-	// 셀 문자에 ANSI 색상 코드를 적용해 출력 문자열에 추가한다.
+	// '@'는 현재 조작 중인 블록, '#'는 보드에 고정된 블록, '+'는 고스트 블록을 뜻한다.
 	void AppendColoredCell(std::ostringstream& frame, char cell)
 	{
 		switch (cell)

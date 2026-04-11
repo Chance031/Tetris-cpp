@@ -480,7 +480,8 @@ void Game::UpdateLevel()
 	m_fallInterval = std::chrono::milliseconds(std::max(fallInterval, MinFallIntervalMs));
 }
 
-// 현재 피스를 기존 next 피스로 교체해 시작 위치에 배치하고, 새로운 next 피스를 생성한다.
+// next 블록을 현재 블록으로 올리고, 새 next 블록을 생성한다.
+// 스폰 위치는 보드 상단 중앙(x = Width/2 - 1, y = 0)이다.
 void Game::SpawnNextPiece()
 {
 	m_currentPiece = m_nextPiece;
@@ -550,7 +551,7 @@ void Game::ProcessLockAndResolve()
 	m_canHold = true;
 	m_lastFallTime = std::chrono::steady_clock::now();
 
-	// 새 피스를 놓을 수 없으면 게임오버로 전환한다.
+	// 스폰 직후 배치가 불가능하면 블록이 쌓여 천장에 닿은 것이므로 게임 오버다.
 	if (!m_board.CanPlace(m_currentPiece))
 	{
 		TransitionTo(GameState::GameOver);
@@ -631,6 +632,7 @@ void Game::HoldCurrentPiece()
 
 	const TetrominoType currentType = m_currentPiece.GetType();
 
+	// 홀드에 블록이 있으면 현재 블록과 교체하고, 없으면 현재 블록을 홀드에 넣고 next를 스폰한다.
 	if (m_hasHoldPiece)
 	{
 		const TetrominoType heldType = m_holdPiece.GetType();
@@ -758,7 +760,8 @@ bool Game::DetectTSpin() const
 
 	int blockedCorners = 0;
 
-	// T 중심 주변 4개 코너 중 3개 이상이 막혀 있는지 확인한다.
+	// T 블록 중심 기준 네 대각선 코너 중 3개 이상이 막혀 있으면 T-Spin으로 판정한다.
+	// 보드 범위 밖도 막힌 칸으로 취급한다.
 	for (const Point& corner : corners)
 	{
 		if (!m_board.IsInside(corner) || m_board.IsCellFilled(corner))
