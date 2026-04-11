@@ -65,3 +65,12 @@ Visual Studio에서 `Tetris.sln` 열고 빌드 후 실행.
 | T-Spin Triple | 1600 × 레벨 |
 | Back-to-Back 보너스 | 위 점수의 +50% |
 | 콤보 보너스 | 50 × 콤보 수 × 레벨 |
+
+
+---
+
+## 관련 프로젝트
+
+| 레포 | 설명 |
+|---|---|
+| [Tetris-sfml](https://github.com/Chance031/Tetris-sfml) | SFML 그래픽 버전 |
