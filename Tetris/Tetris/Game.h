@@ -18,6 +18,7 @@ struct HighScoreEntry
 };
 
 // Game 루프 전체를 조율하는 최상위 클래스다.
+//
 // 입력 처리, 상태 업데이트, 렌더링 순서를 관리하고
 // Board와 Tetromino의 상호작용을 중재한다.
 class Game
@@ -25,12 +26,16 @@ class Game
 public:
 	Game();
 
+	// 게임 시작 전 초기화와 메인 루프 실행을 담당한다.
 	void Initialize();
 	void Run();
 
 private:
+	// 세션 시작과 상태 전환을 처리한다.
 	void StartNewSession();
+	void TransitionTo(GameState newState);
 
+	// 상태별 입력 처리와 프레임 진행을 담당한다.
 	void HandleInput();
 	void HandleTitleInput();
 	void HandlePausedInput();
@@ -38,44 +43,44 @@ private:
 	void Update();
 	void Render();
 
+	// 하이스코어 입출력과 렌더링을 처리한다.
 	void PromptAndSaveHighScore();
 	void AddHighScore(const std::string& name, int score);
 	void RenderHighScores(std::ostringstream& frame) const;
-
-	// 게임오버 후 점수를 기록하고, 실행 간 유지되도록 scores.txt에 저장한다.
 	void SaveHighScores() const;
 	void LoadHighScores();
 
-	// 상태 변경 지점을 한 곳으로 모아 이후 전환 부작용을 붙이기 쉽게 한다.
-	void TransitionTo(GameState newState);
-
+	// 점수와 레벨 계산을 처리한다.
 	int CalculateScore(int clearedLines) const;
 	int CalculateTSpinScore(int clearedLines) const;
 	void UpdateLevel();
 
+	// 블록 생성, 이동, 회전, 고정, 홀드를 처리한다.
 	void SpawnNextPiece();
 	void ProcessLockAndResolve();
-
 	bool TryMoveCurrentPiece(int dx, int dy, bool lockOnFail);
 	bool TryRotateCurrentPiece(RotationDirection direction);
-	void StartLockDelay();
-	void ResetLockDelay();
-	void RefreshLockDelayAfterSuccessfulMove();
-	bool IsCurrentPieceTouchingGround() const;
-	bool DetectTSpin() const;
 	void HardDropCurrentPiece();
 	void HoldCurrentPiece();
 	TetrominoType CreateRandomTetrominoType();
 	void RefillPieceBag();
 
+	// 고스트 피스, 락 딜레이, T-Spin 판정을 처리한다.
+	void StartLockDelay();
+	void ResetLockDelay();
+	void RefreshLockDelayAfterSuccessfulMove();
+	bool IsCurrentPieceTouchingGround() const;
+	bool DetectTSpin() const;
 	Tetromino GetGhostPiece() const;
 
 private:
+	// 낙하 속도와 고정 지연 관련 규칙이다.
 	static constexpr int InitialFallIntervalMs = 800;
 	static constexpr int FallIntervalDecreasePerLevel = 50;
 	static constexpr int MinFallIntervalMs = 100;
 	static constexpr int LockDelayMs = 500;
 	static constexpr int MaxLockResetCount = 15;
+
 	// 점수 규칙은 Game에 모아 두어 라인 정산 흐름에서 한눈에 확인한다.
 	static constexpr int SoftDropScorePerCell = 1;
 	static constexpr int ComboScorePerStep = 50;
@@ -83,9 +88,12 @@ private:
 	static constexpr int TSpinSingleScore = 800;
 	static constexpr int TSpinDoubleScore = 1200;
 	static constexpr int TSpinTripleScore = 1600;
+
+	// 저장 가능한 하이스코어와 이름 길이 제한이다.
 	static constexpr int MaxHighScoreCount = 5;
 	static constexpr int MaxPlayerNameLength = 12;
 
+	// 현재 게임 진행에 필요한 핵심 상태다.
 	Board m_board;
 	Tetromino m_currentPiece;
 	Tetromino m_nextPiece;
@@ -102,6 +110,7 @@ private:
 	std::string m_lastClearMessage;
 	bool m_needsHighScoreName = false;
 
+	// 시간 기반 낙하와 고정 지연을 위한 상태다.
 	std::chrono::steady_clock::time_point m_lastFallTime;
 	std::chrono::milliseconds m_fallInterval{ InitialFallIntervalMs };
 	std::chrono::steady_clock::time_point m_lockStartTime;
@@ -110,6 +119,7 @@ private:
 	int m_lockResetCount = 0;
 	bool m_lastMoveWasRotation = false;
 
+	// 홀드, 랜덤 가방, 하이스코어 저장 상태다.
 	bool m_hasHoldPiece = false;
 	bool m_canHold = true;
 

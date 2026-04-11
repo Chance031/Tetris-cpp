@@ -1,6 +1,7 @@
 #include "Game.h"
 #include "Renderer.h"
 
+// 표준 라이브러리 유틸리티와 입출력
 #include <algorithm>
 #include <array>
 #include <chrono>
@@ -9,11 +10,13 @@
 #include <sstream>
 #include <thread>
 
-// Windows 전용: _kbhit(), _getch() 사용. 크로스플랫폼 빌드 시 대체 필요.
+// Windows 전용 입력 처리: _kbhit(), _getch() 사용.
+// 크로스플랫폼 빌드 시 대체 필요.
 #include <conio.h>
 
 namespace
 {
+	// 키 입력 상수를 정의한다.
 	constexpr int KeyEscape = 27;
 	constexpr int KeyEnter = 13;
 	constexpr int KeyBackspace = 8;
@@ -34,15 +37,12 @@ void Game::Initialize()
 	TransitionTo(GameState::Title);
 }
 
-void Game::TransitionTo(GameState newState)
-{
-	m_state = newState;
-}
-
 void Game::Run()
 {
+	// 50ms 프레임 지연한다. 각 루프의 사이 50ms씩 기간을 두어, 너무 빠르게 돌아가지 않도록 한다.
 	constexpr auto FrameDelay = std::chrono::milliseconds(50);
 
+	// [2J: 화면 전체 지우기 / [H: 커서를 홈 위치(보통 좌상단)로 이동 / [?25l: 커서 숨기기
 	std::cout << "\x1B[2J\x1B[H\x1B[?25l";
 
 	while (m_state != GameState::Exit)
@@ -78,9 +78,12 @@ void Game::Run()
 	}
 
 	Render();
+	// [?25h: 커서 다시 보이게 하기
 	std::cout << "\x1B[?25h" << std::flush;
 }
 
+// 새 게임을 시작하기 위해 필요한 모든 진행 상태를 초기값으로 되돌린다.
+// 첫 피스를 준비한 뒤 게임 상태를 Playing으로 전환하는 함수이다.
 void Game::StartNewSession()
 {
 	m_board.Reset();
@@ -103,6 +106,12 @@ void Game::StartNewSession()
 
 	m_nextPiece = Tetromino(CreateRandomTetrominoType());
 	SpawnNextPiece();
+}
+
+// 게임 상태를 바꾸는 함수
+void Game::TransitionTo(GameState newState)
+{
+	m_state = newState;
 }
 
 void Game::HandleInput()
@@ -571,6 +580,77 @@ bool Game::TryRotateCurrentPiece(RotationDirection direction)
 	return false;
 }
 
+void Game::HardDropCurrentPiece()
+{
+	int dropped = 0;
+
+	while (TryMoveCurrentPiece(0, 1, false))
+		++dropped;
+
+	m_score += dropped * 2;
+
+	m_isLockRequired = true;
+}
+
+void Game::HoldCurrentPiece()
+{
+	if (!m_canHold)
+		return;
+
+	const TetrominoType currentType = m_currentPiece.GetType();
+
+	if (m_hasHoldPiece)
+	{
+		const TetrominoType heldType = m_holdPiece.GetType();
+		m_holdPiece = Tetromino(currentType);
+		m_currentPiece = Tetromino(heldType);
+		m_currentPiece.SetPosition(Board::Width / 2 - 1, 0);
+	}
+	else
+	{
+		m_holdPiece = Tetromino(currentType);
+		m_hasHoldPiece = true;
+		SpawnNextPiece();
+	}
+
+	m_canHold = false;
+	m_isLockRequired = false;
+	m_lastMoveWasRotation = false;
+	ResetLockDelay();
+	m_lastFallTime = std::chrono::steady_clock::now();
+
+	if (!m_board.CanPlace(m_currentPiece))
+	{
+		TransitionTo(GameState::GameOver);
+		m_needsHighScoreName = true;
+	}
+}
+
+TetrominoType Game::CreateRandomTetrominoType()
+{
+	if (m_pieceBag.empty())
+		RefillPieceBag();
+
+	const TetrominoType type = m_pieceBag.back();
+	m_pieceBag.pop_back();
+	return type;
+}
+
+void Game::RefillPieceBag()
+{
+	m_pieceBag = {
+		TetrominoType::I,
+		TetrominoType::J,
+		TetrominoType::L,
+		TetrominoType::O,
+		TetrominoType::S,
+		TetrominoType::T,
+		TetrominoType::Z
+	};
+
+	std::shuffle(m_pieceBag.begin(), m_pieceBag.end(), m_randomEngine);
+}
+
 void Game::StartLockDelay()
 {
 	if (m_isTouchingGround)
@@ -645,77 +725,6 @@ bool Game::DetectTSpin() const
 	return blockedCorners >= 3;
 }
 
-void Game::HardDropCurrentPiece()
-{
-	int dropped = 0;
-
-	while (TryMoveCurrentPiece(0, 1, false))
-		++dropped;
-
-	m_score += dropped * 2;
-
-	m_isLockRequired = true;
-}
-
-void Game::HoldCurrentPiece()
-{
-	if (!m_canHold)
-		return;
-
-	const TetrominoType currentType = m_currentPiece.GetType();
-
-	if (m_hasHoldPiece)
-	{
-		const TetrominoType heldType = m_holdPiece.GetType();
-		m_holdPiece = Tetromino(currentType);
-		m_currentPiece = Tetromino(heldType);
-		m_currentPiece.SetPosition(Board::Width / 2 - 1, 0);
-	}
-	else
-	{
-		m_holdPiece = Tetromino(currentType);
-		m_hasHoldPiece = true;
-		SpawnNextPiece();
-	}
-
-	m_canHold = false;
-	m_isLockRequired = false;
-	m_lastMoveWasRotation = false;
-	ResetLockDelay();
-	m_lastFallTime = std::chrono::steady_clock::now();
-
-	if (!m_board.CanPlace(m_currentPiece))
-	{
-		TransitionTo(GameState::GameOver);
-		m_needsHighScoreName = true;
-	}
-}
-
-TetrominoType Game::CreateRandomTetrominoType()
-{
-	if (m_pieceBag.empty())
-		RefillPieceBag();
-
-	const TetrominoType type = m_pieceBag.back();
-	m_pieceBag.pop_back();
-	return type;
-}
-
-void Game::RefillPieceBag()
-{
-	m_pieceBag = {
-		TetrominoType::I,
-		TetrominoType::J,
-		TetrominoType::L,
-		TetrominoType::O,
-		TetrominoType::S,
-		TetrominoType::T,
-		TetrominoType::Z
-	};
-
-	std::shuffle(m_pieceBag.begin(), m_pieceBag.end(), m_randomEngine);
-}
-
 Tetromino Game::GetGhostPiece() const
 {
 	Tetromino ghostPiece = m_currentPiece;
@@ -733,4 +742,3 @@ Tetromino Game::GetGhostPiece() const
 
 	return ghostPiece;
 }
-
