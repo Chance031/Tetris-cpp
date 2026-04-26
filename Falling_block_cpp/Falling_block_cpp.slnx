@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="Falling_block_cpp/Falling_block_cpp.vcxproj" />
+</Solution>
